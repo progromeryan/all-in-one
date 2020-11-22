@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import './App.css';
 import TodoList from "./components/TodoList";
 import NewTodo from "./components/NewTodo";
 import {Todo} from "./todo.model";
@@ -26,8 +25,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="App">
-      hello
+    <div>
       <NewTodo onAddTodo={todoAddHandler}/>
       <TodoList items={todos} onDeleteTodo={todoDeleteHandler}/>
     </div>
