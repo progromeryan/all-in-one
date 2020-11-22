@@ -15,7 +15,7 @@ plugins:
 collections:
   leetcode:
     output: true
-    sort_by: title
+    sort_by: indexing
 
 exclude:
   - .gitignore

@@ -85,7 +85,7 @@ const projectState = ProjectState.getInstance();
 // Validation
 interface Validatable {
   value: string | number;
-  required?: boolean;
+  required?: boolean; // 和boolean | undefined一样的效果,?表示undefined
   minLength?: number;
   maxLength?: number;
   min?: number;
