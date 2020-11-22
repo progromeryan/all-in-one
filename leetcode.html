@@ -3,7 +3,8 @@ layout: post
 title: LeetCode
 ---
 <ul>
-  {% for lc in site.leetcode %}
+  {% assign sorted = site.leetcode | sort: 'title' %}
+  {% for lc in sorted %}
   <li>
     <h4><a href="/all-in-one{{ lc.url }}">{{ lc.title }}</a></h4>
   </li>
