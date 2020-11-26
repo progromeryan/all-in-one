@@ -1,7 +1,7 @@
 title: Jacob Huang
 description: https://github.com/JacobHuang91/all-in-one
 author: "Jacob Huang"
-
+baseurl: /all-in-one
 theme: minima
 
 show_excerpts: true

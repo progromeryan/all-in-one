@@ -6,7 +6,7 @@ title: LeetCode
   {% assign sorted = site.leetcode | sort: 'order' %}
   {% for lc in sorted %}
   <li>
-    <h4><a href="/all-in-one{{ lc.url }}">{{ lc.title }}</a></h4>
+    <h4><a href="{{ lc.url }}">{{ lc.title }}</a></h4>
   </li>
   {% endfor %}
 </ul>
