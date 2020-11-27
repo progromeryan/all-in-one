@@ -1,7 +1,7 @@
 ---
-title: 
+title:
 order:
-date: 
+date:
 
 layout: post
 tags: LeetCode
@@ -15,13 +15,9 @@ toc_number:
 copyright:
 ---
 
-## YouTube Video
-
 ## Problem
 
-
 ## Code
-
 
 ```java
 
