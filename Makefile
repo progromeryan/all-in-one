@@ -3,3 +3,6 @@ serve:
 
 date:
 	date "+%Y-%m-%d %H:%M:%S"
+
+lc:
+	python3 ./templates/create_file.py
