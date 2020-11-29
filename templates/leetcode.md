@@ -1,7 +1,7 @@
 ---
 title:
 order:
-date:
+date: 2020-12-01
 
 layout: post
 tags: LeetCode

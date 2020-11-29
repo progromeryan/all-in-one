@@ -12,7 +12,7 @@ minima:
   social_links:
     github: https://github.com/JacobHuang91
     youtube: https://www.youtube.com/channel/UCF8C7SraW-e1Ht3JakcNqGQ
-  # date_format: "%Y-%m-%d"
+  date_format: "%Y-%m-%d"
 
 plugins:
   - jekyll-feed
