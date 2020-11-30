@@ -20,6 +20,8 @@ plugins:
 collections:
   leetcode:
     output: true
+  ood:
+    output: true
 
 exclude:
   - .gitignore

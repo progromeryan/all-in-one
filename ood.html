@@ -1,0 +1,12 @@
+---
+layout: post
+title: OOD
+---
+<ul>
+  {% assign sorted = site.ood | sort: 'order' %}
+  {% for ood in sorted %}
+  <li>
+    <h4><a href="/all-in-one{{ ood.url }}">{{ lc.title }}</a></h4>
+  </li>
+  {% endfor %}
+</ul>

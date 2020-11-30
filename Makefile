@@ -6,3 +6,6 @@ date:
 
 lc:
 	python3 ./templates/create_file.py
+
+ood:
+	python3 ./templates/create_file_ood.py
