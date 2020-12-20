@@ -1,0 +1,39 @@
+group 'com.github.simplesteph.protobuf'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+// 翻译protobuf的plugin
+apply plugin: 'com.google.protobuf'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // 翻译protobuf的plugin
+    compile 'com.google.protobuf:protobuf-java:3.5.1'
+    // util dependency to convert to JSON
+    compile 'com.google.protobuf:protobuf-java-util:3.5.1'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+// 翻译protobuf的plugin
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.5'
+    }
+}
+// 翻译protobuf的plugin
+protobuf {
+    // Configure the protoc executable
+    protoc {
+        // Download from repositories
+        artifact = 'com.google.protobuf:protoc:3.5.1'
+    }
+}

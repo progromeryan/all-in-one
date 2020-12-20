@@ -1,0 +1,39 @@
+// The syntax for this file is proto3
+syntax = "proto3";
+
+import "3-basics-part-ii/4-date-with-package.proto";
+
+package person;
+
+message Person {
+  int32 age = 1;
+  string first_name = 2;
+  string last_name = 3; 
+  bytes small_picture = 4;
+  bool is_profile_verified = 5;
+  float height = 6;
+
+  repeated string phone_numbers = 7;
+
+  enum EyeColour {
+    UNKNOWN_EYE_COLOUR = 0;
+    EYE_GREEN = 1;
+    EYE_BROWN = 2;
+    EYE_BLUE = 3;
+  }
+
+  EyeColour eye_colour = 8;
+
+  // Person's birthday
+  my.date.Date birthday = 9; // 使用package
+
+  message Address {
+    string address_line_1 = 1;
+    string address_line_2 = 2;
+    string zip_code = 3;
+    string city = 4;
+    string country = 5;
+  }
+
+  repeated Address addresses = 10;
+}
