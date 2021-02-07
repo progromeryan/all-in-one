@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="./style.css" />
+    <script
+      src="https://kit.fontawesome.com/3863f17784.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <h2>stars</h2>
+    &#9734; &#9733;
+    <div>
+      <i class="fas fa-star"></i>
+      <i class="far fa-star"></i>
+    </div>
+
+    <div class="rating">
+      <i id="1" class="far fa-star star"></i>
+      <i id="2" class="far fa-star star"></i>
+      <i id="3" class="far fa-star star"></i>
+      <i id="4" class="far fa-star star"></i>
+      <i id="5" class="far fa-star star"></i>
+    </div>
+    <h2>tooltip</h2>
+    <p>
+      We then bind two functions to our links using “addEventListener()”. One
+      during “mouseover” and “mouseout”.
+      <a class="link" title="function">The functions</a> are named “createTip”
+      and “cancelTip” (which we haven’t created yet). Know that
+      “addEventListener()” is similar to jQuery’s “.on()”. It’s funny that I’m
+      writing a tutorial on pure JavaScript and comparing functions to jQuery.
+      Usually, it’s the other way around. Moving on…
+    </p>
+
+    <div>
+      <div class="card">
+        <div class="card__side card__side--front">
+          <div>
+            <ul>
+              <li>front</li>
+              <li>front</li>
+              <li>front</li>
+              <li>front</li>
+              <li>front</li>
+              <li>front</li>
+              <li>front</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card__side card__side--back">
+          <div>
+            <ul>
+              <li>back</li>
+              <li>back</li>
+              <li>back</li>
+              <li>back</li>
+              <li>back</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./FiveStars.js"></script>
+    <script src="./tooltip.js"></script>
+    <script src="./FlashCard.js"></script>
+  </body>
+</html>
