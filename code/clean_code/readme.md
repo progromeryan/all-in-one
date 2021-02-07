@@ -39,3 +39,7 @@
 # Code structure, comments, and formatting
 
 - avoid comments
+
+# Function
+
+- minimize parameter number
