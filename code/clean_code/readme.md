@@ -43,3 +43,4 @@
 # Function
 
 - minimize parameter number
+- function should be small and do one thing - level of abstraction
