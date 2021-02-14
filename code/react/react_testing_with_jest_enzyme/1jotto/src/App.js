@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import GuessWords from "./GuessWords";
+import Congrats from "./Congrats";
+import { getSecretWord } from './actions';
+import Input from './Input';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export class UnconnectedApp extends Component {
+  componentDidMount(){
+    // get the secret word
+    this.props.getSecretWord();
+  }
+
+  render(){
+    return (
+      <div>
+        <Congrats success={this.props.success}/>
+        <Input/>
+        <GuessWords guessedWords={this.props.guessedWords}/>
+      </div>
+    );
+  }
 }
 
-export default App;
+const mapStateToProps = ( state ) => {
+  const { success, guessedWords, secretWord } = state;
+  return { success, guessedWords, secretWord };
+}
+
+export default connect(mapStateToProps, { getSecretWord })(UnconnectedApp);
+
