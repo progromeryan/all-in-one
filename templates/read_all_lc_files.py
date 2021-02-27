@@ -8,7 +8,7 @@ parent_path = Path(cwd).parent
 lc_file_path = os.path.join(parent_path, "_leetcode")
 
 files = ["[{filename_prefix}]({{{{ site.baseurl }}}}{{% link _leetcode/{filename} %}}) \n".format(
-    filename_prefix=f.split(".")[0],
+    filename_prefix=f.split(".")[0] + "." + f.split(".")[1],
     filename=f,
 )
 for f in listdir(lc_file_path) 
