@@ -4,11 +4,17 @@ serve:
 date:
 	date "+%Y-%m-%d %H:%M:%S"
 
-lc:
-	python3 ./templates/create_file.py
+# FILE_NAME="HELLO" make lc
+check-lc-name:
+ifndef NAME
+	$(error name is required for the command)
+endif
+
+lc: check-lc-name
+	python3 ./templates/create_file.py --name='${NAME}'
 
 ood:
 	python3 ./templates/create_file_ood.py
 
-list-lc:
+list-lc: 
 	python3 ./templates/read_all_lc_files.py

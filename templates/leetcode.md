@@ -7,15 +7,11 @@ layout: post
 tags: LeetCode
 categories: LeetCode
 keywords: LeetCode
-description:
-cover:
-top_img:
-toc:
-toc_number:
-copyright:
 ---
 
 ## Problem
+
+![image tooltip here](./assets/356-1.png)
 
 ## Code
 
@@ -23,6 +19,4 @@ copyright:
 
 ```
 
-```python
-
-```
+[]({{ site.baseurl }}{% link _leetcode/.md %})
