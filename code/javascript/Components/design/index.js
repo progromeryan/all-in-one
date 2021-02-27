@@ -63,30 +63,23 @@ function isObject(object) {
 }
 
 // lodash set
-const set = (obj, path, value) => {
-  if (Object(obj) !== obj) return obj; // When obj is not an object
-  // If not yet an array, get the keys from the string-path
-  if (!Array.isArray(path)) path = path.toString().match(/[^.[\]]+/g) || [];
-  path.slice(0, -1).reduce(
-    (
-      a,
-      c,
-      i // Iterate all of them except the last one
-    ) =>
-      Object(a[c]) === a[c] // Does the key exist and is its value an object?
-        ? // Yes: then follow that path
-          a[c]
-        : // No: create the key. Is the next key a potential array-index?
-          (a[c] =
-            Math.abs(path[i + 1]) >> 0 === +path[i + 1]
-              ? [] // Yes: assign a new array object
-              : {}), // No: assign a new plain object
-    obj
-  )[path[path.length - 1]] = value; // Finally assign the value to the last key
-  return obj; // Return the top-level object to allow chaining
-};
+const isObject = (input) =>
+  null !== input &&
+  typeof input === "object" &&
+  Object.getPrototypeOf(input).isPrototypeOf(Object);
 
-// Demo
-var obj = { test: true };
-set(obj, "test.1.it", "hello");
-console.log(obj); // includes an intentional undefined value
+const setByString = (obj, path, value) => {
+  const pList = Array.isArray(path) ? path : path.split(".");
+  const len = pList.length;
+  // changes second last key to {}
+  for (let i = 0; i < len - 1; i++) {
+    const elem = pList[i];
+    if (!obj[elem] || !isObject(obj[elem])) {
+      obj[elem] = {};
+    }
+    obj = obj[elem];
+  }
+
+  // set value to second last key
+  obj[pList[len - 1]] = value;
+};

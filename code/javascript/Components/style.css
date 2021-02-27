@@ -60,3 +60,13 @@
   transform: rotateY(180deg);
   background-color: yellow;
 }
+
+#container {
+  width: 400px;
+  background: yellow;
+}
+#floated {
+  float: left;
+  width: 150px;
+  background: red;
+}
