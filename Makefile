@@ -9,3 +9,6 @@ lc:
 
 ood:
 	python3 ./templates/create_file_ood.py
+
+list-lc:
+	python3 ./templates/read_all_lc_files.py
