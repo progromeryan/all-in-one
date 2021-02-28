@@ -18,3 +18,6 @@ ood:
 
 list-lc: 
 	python3 ./templates/read_all_lc_files.py
+
+sd:
+	python3 ./templates/create_file_system_design.py

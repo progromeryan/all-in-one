@@ -22,6 +22,8 @@ collections:
     output: true
   ood:
     output: true
+  system_design:
+    output: true
 
 exclude:
   - .gitignore

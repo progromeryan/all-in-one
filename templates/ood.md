@@ -7,10 +7,4 @@ layout: post
 tags: OOD
 categories: OOD
 keywords: OOD
-description:
-cover:
-top_img:
-toc:
-toc_number:
-copyright:
 ---

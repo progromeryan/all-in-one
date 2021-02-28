@@ -1,0 +1,13 @@
+---
+layout: post
+title: System Design
+---
+
+<ul>
+  {% assign sorted = site.system_design | sort: 'order' %} {% for sd in sorted
+  %}
+  <li>
+    <h4><a href="/all-in-one{{ sd.url }}">{{ sd.title }}</a></h4>
+  </li>
+  {% endfor %}
+</ul>
