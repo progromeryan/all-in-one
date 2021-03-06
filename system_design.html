@@ -5,20 +5,19 @@ title: System Design
 
 <h2>System Design</h2>
 <ul>
-  {% assign sorted = site.system_design | where: 'type', '' | sort: 'order' %}
-  {% for sd in sorted %}
+  {% assign sorted = site.system_design | sort: 'order' %} {% for sd in sorted
+  %} {% if sd.path contains 'frontend' %} {% else%}
   <li>
     <h4><a href="/all-in-one{{ sd.url }}">{{ sd.title }}</a></h4>
   </li>
-  {% endfor %}
+  {% endif %} {% endfor %}
 </ul>
 
 <h2>Frontend System Design</h2>
 <ul>
-  {% assign sorted = site.system_design.frontend | where: 'type', 'frontend'|
-  sort: 'order' %} {% for sd in sorted %}
+  {% for sd in site.system_design %} {% if sd.path contains 'frontend' %}
   <li>
     <h4><a href="/all-in-one{{ sd.url }}">{{ sd.title }}</a></h4>
   </li>
-  {% endfor %}
+  {% endif %} {% endfor %}
 </ul>
