@@ -15,7 +15,8 @@ title: System Design
 
 <h2>Frontend System Design</h2>
 <ul>
-  {% for sd in site.system_design %} {% if sd.path contains 'frontend' %}
+  {% assign sorted = site.system_design | sort: 'order' %} {% for sd in sorted
+  %} {% if sd.path contains 'frontend' %}
   <li>
     <h4><a href="/all-in-one{{ sd.url }}">{{ sd.title }}</a></h4>
   </li>
