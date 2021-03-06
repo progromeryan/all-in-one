@@ -31,3 +31,5 @@ exclude:
   - Gemfile.lock
   - code
   - templates
+
+relative_permalinks: false
