@@ -12,6 +12,7 @@ keywords: LeetCode
 <img src="./assets/youtube.png" alt="drawing" width="60%"/>
 
 <img src="./assets/wx.jpg" alt="drawing" width="20%"/>
+欢迎微信赞助！
 
 ## Problem
 
