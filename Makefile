@@ -4,7 +4,7 @@ serve:
 date:
 	date "+%Y-%m-%d %H:%M:%S"
 
-# FILE_NAME="HELLO" make lc
+# NAME="HELLO" make lc
 check-lc-name:
 ifndef NAME
 	$(error name is required for the command)

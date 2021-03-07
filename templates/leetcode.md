@@ -3,16 +3,11 @@ title:
 order:
 date: 2020-12-01
 
-layout: post
+layout: leetcode
 tags: LeetCode
 categories: LeetCode
 keywords: LeetCode
 ---
-
-<img src="./assets/youtube.png" alt="drawing" width="60%"/>
-
-<img src="./assets/wx.jpg" alt="drawing" width="20%"/>
-欢迎微信赞助！
 
 ## Problem
 
@@ -24,4 +19,5 @@ keywords: LeetCode
 
 ```
 
-[]({{ site.baseurl }}{% link _leetcode/.md %})
+[url]
+[image]
