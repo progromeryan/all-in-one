@@ -24,8 +24,7 @@ list_of_lines[1] = "title: {title}\n".format(title=filename)
 list_of_lines[2] = "order: {order}\n".format(order=filename.split(".")[0])
 list_of_lines[3] = "date: {date}\n".format(date=tt)
 
-list_of_lines[21] = "[" + filename +"]({{ site.baseurl }}{% link _leetcode/"+ filename +".md %}) \n"
-list_of_lines[22] = "![image tooltip here](./assets/{name}.png)\n".format(name=filename.split(".")[0])
+list_of_lines[22] = "[" + filename +"]({{ site.baseurl }}{% link _leetcode/"+ filename +".md %}) \n"
 # output
 output = os.path.join(cwd, "_leetcode", filename+".md")
 

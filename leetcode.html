@@ -103,6 +103,38 @@ title: LeetCode Problems
           {% endfor %}
         </ul>
       </div>
+
+      <button class="accordion">Math</button>
+      <div class="panel">
+        <ul>
+          {% assign sorted = site.leetcode | sort: 'order' %} {% for lc in sorted
+          %}
+          {% if lc.topics contains 'math' %}
+          <li>
+            <h6 style="margin-top: 0; margin-bottom: 5px">
+              <a href="/all-in-one{{ lc.url }}">{{ lc.title }}</a>
+            </h4>
+          </li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+
+      <button class="accordion">Bit</button>
+      <div class="panel">
+        <ul>
+          {% assign sorted = site.leetcode | sort: 'order' %} {% for lc in sorted
+          %}
+          {% if lc.topics contains 'bit' %}
+          <li>
+            <h6 style="margin-top: 0; margin-bottom: 5px">
+              <a href="/all-in-one{{ lc.url }}">{{ lc.title }}</a>
+            </h4>
+          </li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
     </div>
   </div>
 </div>
