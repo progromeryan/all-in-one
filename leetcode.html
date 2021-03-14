@@ -79,7 +79,7 @@ title: LeetCode Problems
       {% assign sorted = site.leetcode | sort: 'order' %} {% for lc in sorted %}
       <li>
         <h6 style="margin-top: 0; margin-bottom: 5px" class="counter">
-          <a href="/all-in-one{{ lc.url }}" target="_blank">{{ lc.title }} {{lc.topics}}</a>
+          <a href="/all-in-one{{ lc.url }}" target="_blank">{{ lc.title }}</a>
         </h4>
       </li>
       {% endfor %}
@@ -126,6 +126,22 @@ title: LeetCode Problems
           {% assign sorted = site.leetcode | sort: 'order' %} {% for lc in sorted
           %}
           {% if lc.topics contains 'design' %}
+          <li>
+            <h6 style="margin-top: 0; margin-bottom: 5px">
+              <a href="/all-in-one{{ lc.url }}">{{ lc.title }}</a>
+            </h4>
+          </li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+
+      <button class="accordion">DFS</button>
+      <div class="panel">
+        <ul>
+          {% assign sorted = site.leetcode | sort: 'order' %} {% for lc in sorted
+          %}
+          {% if lc.topics contains 'DFS' %}
           <li>
             <h6 style="margin-top: 0; margin-bottom: 5px">
               <a href="/all-in-one{{ lc.url }}">{{ lc.title }}</a>
