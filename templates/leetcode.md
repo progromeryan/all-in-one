@@ -19,5 +19,3 @@ topics:
 ```java
 
 ```
-
-[url]
