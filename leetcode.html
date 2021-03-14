@@ -168,7 +168,21 @@ title: LeetCode Problems
         </ul>
       </div>
 
-
+      <button class="accordion">Tree</button>
+      <div class="panel">
+        <ul>
+          {% assign sorted = site.leetcode | sort: 'order' %} {% for lc in sorted
+          %}
+          {% if lc.topics contains 'tree' %}
+          <li>
+            <h6 style="margin-top: 0; margin-bottom: 5px">
+              <a href="/all-in-one{{ lc.url }}" target="_blank">{{ lc.title }}</a>
+            </h4>
+          </li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
 
 
       
