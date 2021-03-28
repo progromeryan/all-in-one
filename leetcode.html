@@ -200,6 +200,24 @@ title: LeetCode Problems
         </ul>
       </div>
 
+
+      <button class="accordion">Graph</button>
+      <div class="panel">
+        <ul>
+          {% assign sorted = site.leetcode | sort: 'order' %} {% for lc in sorted
+          %}
+          {% if lc.topics contains 'graph' %}
+          <li>
+            <h6 style="margin-top: 0; margin-bottom: 5px">
+              <a href="/all-in-one{{ lc.url }}" target="_blank">{{ lc.title }}</a>
+            </h4>
+          </li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+
+
       <button class="accordion">Math</button>
       <div class="panel">
         <ul>
