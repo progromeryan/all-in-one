@@ -11,4 +11,4 @@ vendor
 .idea
 .vscode
 
-_leetcode/java/out
+_leetcode/java/out/**
