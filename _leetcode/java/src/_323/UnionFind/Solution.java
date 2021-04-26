@@ -1,4 +1,4 @@
-package _323;
+package _323.UnionFind;
 
 import structures.UnionFind;
 
