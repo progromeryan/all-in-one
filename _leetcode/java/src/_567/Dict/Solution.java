@@ -1,37 +1,5 @@
----
-title: 567. Permutation in String
-order: 567
-date: 2021-04-28 20:05:30
+package _567.Dict;
 
-layout: leetcode
-tags: LeetCode
-categories: LeetCode
-keywords: LeetCode
-topics:
----
-
-## Problem
-
-Given two strings s1 and s2, return true if s2 contains the permutation of s1.
-
-In other words, one of s1's permutations is the substring of s2.
-
-Example 1:
-```
-Input: s1 = "ab", s2 = "eidbaooo"
-Output: true
-Explanation: s2 contains one permutation of s1 ("ba").
-```
-Example 2:
-```
-Input: s1 = "ab", s2 = "eidboaoo"
-Output: false
-```
-## Code
-
-查看438
-
-```java
 public class Solution {
     public boolean checkInclusion(String s1, String s2) {
         if (s1.length() > s2.length()) return false;
@@ -67,4 +35,3 @@ public class Solution {
         return true;
     }
 }
-```

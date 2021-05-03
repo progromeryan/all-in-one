@@ -189,7 +189,7 @@ title: LeetCode Problems
         <ul>
           {% assign sorted = site.leetcode | sort: 'order' %} {% for lc in sorted
           %}
-          {% if lc.topics contains 'dynamic programming' %}
+          {% if lc.topics contains 'dynamic programming' or lc.topics contains 'DP'%}
           <li>
             <h6 style="margin-top: 0; margin-bottom: 5px">
               <a href="/all-in-one{{ lc.url }}">{{ lc.title }}</a>
