@@ -6,12 +6,12 @@ date:
 
 # NAME="HELLO" make lc
 check-lc-name:
-ifndef NAME
+ifndef name
 	$(error name is required for the command)
 endif
 
 lc: check-lc-name
-	python3 ./templates/create_file.py --name='${NAME}'
+	python3 ./templates/create_file.py --name='${name}'
 
 ood:
 	python3 ./templates/create_file_ood.py

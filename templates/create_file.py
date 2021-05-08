@@ -42,6 +42,6 @@ output = os.path.join(cwd, "_leetcode", "java", "src", java_folder_name, "Soluti
 
 a_file = open(output, "a+")
 
-line = "package " + java_folder_name + ";" + "\n" + "import java.util.*;\n"
+line = "package " + java_folder_name + ";" + "\n" + "import java.util.*;\n" + "import structures.*;\n\n"
 a_file.write(line)
 a_file.close()
