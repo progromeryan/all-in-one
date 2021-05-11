@@ -12,3 +12,4 @@ vendor
 .vscode
 
 _leetcode/java/out/**
+_leetcode/out/**
