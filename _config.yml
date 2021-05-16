@@ -29,3 +29,5 @@ exclude:
   - Gemfile.lock
   - code
   - templates
+  - books
+  - interview

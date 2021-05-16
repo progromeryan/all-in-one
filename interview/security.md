@@ -1,6 +1,14 @@
 # XSS
 
+![xss](./asstes/xss.svg)
+
 Cross-site Scripting (XSS) is a client-side code injection attack. The attacker aims to execute malicious scripts in a web browser.
+
+## Types
+
+- Reflected XSS, where the malicious script comes from the current HTTP request.
+- Stored XSS, where the malicious script comes from the website's database.
+- DOM-based XSS, where the vulnerability exists in client-side code rather than server-side code.
 
 example:
 Malicious JavaScript has access to all the objects that the rest of the web page has access to. This includes access to the user’s **cookies**. Cookies are often used to store session tokens. If an attacker can obtain a user’s session cookie, they can impersonate that user, perform actions on behalf of the user, and gain access to the user’s sensitive data.
