@@ -3,7 +3,7 @@ package _200.BFS;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Solution {
+class Solution {
     public int numIslands(char[][] grid) {
         int m = grid.length;
         int n = grid[0].length;
@@ -37,4 +37,3 @@ public class Solution {
         return res;
     }
 }
-
