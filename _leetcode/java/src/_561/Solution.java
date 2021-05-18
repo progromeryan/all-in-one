@@ -1,4 +1,4 @@
-package _561.Approach1;
+package _561;
 
 import java.util.Arrays;
 
