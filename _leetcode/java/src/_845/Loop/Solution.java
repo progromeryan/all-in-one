@@ -1,4 +1,4 @@
-package _845.Approach1;
+package _845.Loop;
 
 
 class Solution {
