@@ -62,3 +62,36 @@ Feed publishing
 news feed building
 
 ![img](assets/24.png)
+
+## Step 3 - Design deep dive
+
+- 通过和面试官沟通, 知道要主要处理哪个 service
+- 通常来讲, 会集中在一到两个 service 的设计上
+
+example
+
+两个主要的 use cases
+
+1. feed publishing
+2. news feed retrieval
+
+![img](assets/25.png)
+![img](assets/26.png)
+
+## Step 4 - wrap up
+
+follow-up questions
+
+- system bottlenecks
+- potential improvements
+- recap the whole design
+- error cases (server failure, network loss...)
+- monitoring
+- how to scale to more users, like 10 million
+- other refinements
+
+# Time allocation on each step
+
+- Step 1 Understand the problem and establish design scope: 3 - 10 minutes - Step 2 Propose high-level design and get buy-in: 10 - 15 minutes
+- Step 3 Design deep dive: 10 - 25 minutes
+- Step 4 Wrap: 3 - 5 minutes
