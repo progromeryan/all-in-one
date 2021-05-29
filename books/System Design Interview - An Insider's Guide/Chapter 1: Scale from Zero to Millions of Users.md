@@ -1,3 +1,5 @@
+# Scale from Zero to Million of Users
+
 # Single server setup
 
 ![image](assets/1.png)

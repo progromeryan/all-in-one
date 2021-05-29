@@ -1,3 +1,5 @@
+# A framework for system design interviews
+
 - collaboration
 - work under pressure
 - resolve ambiguity constructively

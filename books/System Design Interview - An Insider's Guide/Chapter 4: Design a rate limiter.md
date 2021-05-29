@@ -1,3 +1,5 @@
+# Design a Rate Limiter
+
 > In a network system,
 > a rate limiter is used to control the rate of traffic sent by a client or a service.
 > In the HTTP world,
