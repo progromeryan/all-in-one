@@ -177,3 +177,70 @@ request body
 - notification log database for data persistence
 
 ### will recipients receive a notification exactly once?
+
+有可能导致重复推送. 为了防止重复推送发生
+
+- 当收到一个 notification event 的时候, 先查看 event ID
+- 如果已经存在这个 event ID, 就放弃当前推送
+- 如果不存在这个 event ID, 就进行推送
+
+## Additional components and consideration
+
+### notification template
+
+- 很多 notification 都很类似, 所以需要一个 template
+- 提高效率, 避免错误, 节省时间
+
+### notification setting
+
+- 把用户对 notification 的设置存在 setting table 中
+- 如果有些用户设置不接受 notification, 我们把设置存在 db 中, 每次发送之前都要检查这个 db
+
+### rate limiting
+
+- limit the number of notifications a user can receive, 防止用户因为收到太多的 notification 而彻底关闭接收
+
+### retry mechanism
+
+- 当 third-party 没有推送成功,notification 需要被重新放到 queue 中, 然后 retry
+- 如果多次重试都未成功, 需要发送 alert 给开发人员
+
+### security in push notification
+
+- IOS 和 Android 有自己的 security 方法, 只有授权的 client 才能发送推送
+
+### monitor queued notification
+
+- total number of queued notifications
+- 如果数量过大, 那么需要增加 worker 的数量
+
+![img](assets/10-12.png)
+
+### events tracking
+
+notification metrics
+
+- open rate
+- click rate
+- engagement
+
+![img](assets/10-13.png)
+
+## Update design
+
+![img](assets/10-14.png)
+
+- notification servers
+  - authentication
+  - rate limit
+- add retry mechanism to handle notification failures
+- notification template
+- monitoring and tracking systems
+
+# Step 4: wrap up
+
+- Reliability: retry mechanism to minimize failure rate
+- security: third-party server verify clients to send notification
+- tracking and monitoring
+- user setting: don't send notifications if user opt-out
+- rate limiting: don't send notifications to a user too frequently
