@@ -1,58 +1,58 @@
 # Back-of-the-envelope Estimation
 
-> back-of-the-envelope calculations are estimates
-> you create using a combination of thought experiments and common performance numbers to
+> Back-of-the-envelope calculations are estimates
+> using a combination of thought experiments and common performance numbers to
 > get a good feel for which designs will meet your requirements
 
-# Power of two
+# 1. Power of two
 
-A byte is a sequence of 8 bits. An ASCII character uses one byte of memory (8 bits).
+> A byte is a sequence of 8 bits. An ASCII character uses one byte of memory (8 bits).
 
-![img](assets/20.png)
+![img](assets/2-1.png)
 
-# Latency (潜在的) numbers every programmer should know
+# 2. Latency numbers
 
-![img](assets/21.png)
+![img](assets/2-2.png)
 
-- Memory is fast but the disk is slow
+- Memory -> ns - us; Disk -> ms
+- Memory is fast; the disk is slow
 - Avoid disk seeks if possible
 - Simple compression algorithms are fast
 - Compress data before sending it over the internet if possible
-- Data centers are usually in different regions, and it takes time to send data between them
+- Data centers are usually in different regions. It takes time to send data between them
 
-# Availability numbers
+# 3. Availability numbers
 
-High availability is the ability of a system to be continuously operational for a desirably long period of time.
+- High availability is the ability of a system to be continuously operational for a desirably long period of time.
+- High availability is measured as a percentage, with 100% means a service that has 0 downtime. Most services fall between 99% and 100%.
+- **Service level agreement (SLA)** is a commonly term for service providers. It defines the level of uptime. (AWS/GCP is 99.99%)
 
-High availability is measured as a percentage, with 100% means a service that has 0 downtime. Most services fall between 99% and 100%.
+![img](assets/2-3.png)
 
-A **service level agreement (SLA)** is a commonly used term for service providers. (AWS/GCP 等通常为 99.99%)
+# 4. Example: estimate twitter QPS and storage requirements
 
-![img](assets/22.png)
+## 4.1 Assumptions
 
-# Example: estimate twitter QPS and storage requirements
-
-## 假设
-
-- 300 million monthly active users (3 亿月活)
+- 300 million monthly active users
 - 50% users use daily
-- users post two tweets per day on average
+- Users post two tweets per day on average
 - 10% tweets contain media
-- data is stored for 5 years
+- Data is stored for 5 years
 
-## 预测
+## 4.2 Estimations
 
-**Query per second (QPS)**
+### Query per second (QPS)
 
-- Daily active users (DAU) = 300 million / 2 = 150 million (日活 = 月活 / 2)
-- QPS = 150 million \* 2 tweets / 24 hour / 3600 second ~= 3500
-- Peak QPS = 2 \* QPS ~= 7000 (peak qps = 2 \* qps)
+- Daily active users (DAU) = 300 million / 2 = 150 million
+- QPS = 150 million \* 2 tweets / 24 hour / 3600 second ~= 3500 / second
+- Peak QPS ~= 2 \* QPS ~= 7000
 
-**media storage**
+### Media storage
 
-- average tweet size
+- Average tweet size
   - tweet_id: 64 bytes
-  - text: 140 bytes (一个英文字母占 1byte, 一个汉子占 2 byte)
+  - text: 140 bytes (One English character: 1byte, one Chinese character: 2 byte)
   - media: 1 MB
-- media storage: 150 million \* 2 \* 10% \* 1 MB = 30TB / day
-- 5 year media storage: 30 TB \* 265 \* 5 ~= 55 PB
+- Media storage: 150 million \* 2 \* 10% \* 1 MB = 30TB / day
+  - 150,000,000 \* 1 MB = 300,000,000 \* 1,000,000 \* 1KB = 300,000,000,000,000 = 300 TB
+- 5 year media storage: 30 TB \* 365 \* 5 ~= 55 PB

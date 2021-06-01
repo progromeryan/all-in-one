@@ -1,22 +1,21 @@
-# A framework for system design interviews
+# A Framework for System Design Interview
 
-- collaboration
-- work under pressure
-- resolve ambiguity constructively
-- don't make over-engineered system
-- don't ignore tradeoffs
-- save money
+# 1. Key points
 
-**Ask questions!!**
+- Collaboration
+- Work under pressure
+- Resolve ambiguity
+- Don't make over-engineered system
+- Don't ignore tradeoffs
+- Save money
 
-# A 4-step process for effective system design interview
+# 2. A 4-step process for effective system design interview
 
-## Step 1 - understand the problem and establish design scope
+## Step 1 - Understand the problem and establish design scope (3 - 10 minutes)
 
-- 不要急于回答问题, 先分析需求
-- 如果面试官要你自己假设, 那就把假设写下来, 随时使用
+> Think deeply and ask questions to clarify requirements and assumptions
 
-要问什么问题?
+### What are the questions?
 
 - What specific **features**?
 - How many **users**?
@@ -24,7 +23,7 @@
 - What is technology stack?
 - What existing services we can leverage to simplify the design?
 
-举例 design a news feed system
+### Example: design a news feed system
 
 - Candidate: Is this a mobile app? Or a web app? Or both?
 - Interviewer: Both.
@@ -39,61 +38,54 @@
 - Candidate: Can feed contain images, videos, or just text?
 - Interviewer: It can contain media files, including both images and videos.
 
-## Step 2 - propose high-level design and get buy-in
+## Step 2 - Propose high-level design and get buy-in (10 - 15 minutes)
 
-reach an agreement with interviewer
+> Reach an agreement with interviewer
 
-- collaboration: 和面试官合作完成, 把他当成 teammate
-- 完成 initial blueprint
-- 画出核心 components, 比如 client, APIs, servers, data stores, cache, CDN, message queue...
-- 列出 use cases, 逐一分析
-- back-of-the-envelope 计算出大概的 scale
+### Key points
 
-举例 design a news feed system
+- Collaboration: treat interviewer as a teammate
+- Complete initial blueprint
+- Draw key components, like client, APIs, servers, data stores, cache, CDN...
+- List use cases and analyze
+- Back-of-the-envelope
 
-At the high level, the design is divided into two flows:
-feed publishing and news feed building.
+### Example: design a news feed system
 
-- Feed publishing: when a user publishes a post, corresponding data is written into cache/database,database, and the post will be populated into friends’ news feed.
-- Newsfeed building: the news feed is built by aggregating friends’ posts in a reverse chronological order.
+- At the high level, the design is divided into two flows
+  - Feed publishing
+  - Newsfeed building
+- Feed publishing: when a user publishes a post, corresponding data is written into cache/database, and the post will be populated into friends’ news feed.
+- Newsfeed building: news feed is built by aggregating friends’ posts in a reverse chronological order.
 
-Feed publishing
+- Feed publishing
+- Newsfeed building
 
-![img](assets/23.png)
+![img](assets/3-1.png)
+![img](assets/3-2.png)
 
-news feed building
+## Step 3 - Design deep dive (10 - 25 minutes)
 
-![img](assets/24.png)
+> Talk to interviewer: which parts we need to dive into?
 
-## Step 3 - Design deep dive
+### Example: design a news feed system
 
-- 通过和面试官沟通, 知道要主要处理哪个 service
-- 通常来讲, 会集中在一到两个 service 的设计上
+> Two important use cases
 
-example
+1. Feed publishing
+2. newsfeed retrieval
 
-两个主要的 use cases
+![img](assets/3-3.png)
+![img](assets/3-4.png)
 
-1. feed publishing
-2. news feed retrieval
+## Step 4 - Wrap up (3 - 5 minutes)
 
-![img](assets/25.png)
-![img](assets/26.png)
+> Follow-up questions
 
-## Step 4 - wrap up
-
-follow-up questions
-
-- system bottlenecks
-- potential improvements
-- recap the whole design
-- error cases (server failure, network loss...)
-- monitoring
-- how to scale to more users, like 10 million
-- other refinements
-
-# Time allocation on each step
-
-- Step 1 Understand the problem and establish design scope: 3 - 10 minutes - Step 2 Propose high-level design and get buy-in: 10 - 15 minutes
-- Step 3 Design deep dive: 10 - 25 minutes
-- Step 4 Wrap: 3 - 5 minutes
+- System bottlenecks
+- Potential improvements
+- Recap the whole design
+- Error cases (server failure, network loss...)
+- Monitoring
+- How to scale to more users, like 10 million
+- Other refinements

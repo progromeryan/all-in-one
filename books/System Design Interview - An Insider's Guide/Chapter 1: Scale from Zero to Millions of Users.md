@@ -1,8 +1,8 @@
 # Chapter 1: Scale from Zero to Million of Users
 
-# Single server setup
+# 1. Single server setup
 
-## Simple design V1
+## 1.1 Simple design V1
 
 ![image](assets/1-1.png)
 
@@ -11,12 +11,12 @@
 3. Client sends HTTP requests to web server
 4. Server returns HTML pages or JSON response
 
-## Simple design V2
+## 1.2 Simple design V2
 
 ### Two servers
 
 > With the growth of the users numbers, one server is not enough, what we should do?
-> Solution: add one more server!
+> Add one more server!
 
 1. server 1 for web/mobile traffic
 2. server 2 for DB
@@ -29,9 +29,9 @@
 - Non-relational DB (CouchDB, Neo4j, Cassandra, HBase, Amazon DynamoDB...)
   - Four categories:
     - key-value stores
-    - graph stores
-    - column stores
-    - document stores
+    - Graph stores
+    - Column stores
+    - Document stores
   - No join operations
 
 > When select NoSQL?
@@ -42,38 +42,37 @@
 - Only need to serialize/deserialize data (JSON, XML, YAML...)
 - A massive amount of data
 
-# Vertical scaling vs horizontal scaling
+# 2. Vertical scaling vs horizontal scaling
 
-## Vertical - Scale up!
+## 2.1 Vertical - Scale up!
 
 - Add more power to servers (CPU, RAM...)
 - Pros
   - Good for small app
   - Simple
 - Cons
-  - Hard limit, impossible to add unlimited CPU and memory
+  - Hard limit: impossible to add unlimited CPU and memory to one server
   - No failover (故障转移)
   - No redundancy
 
-## Horizontal - Scale out!
+## 2.2 Horizontal - Scale out!
 
 - Add more servers
 - Good for large app
 
-# Load balancer
+# 3. Load balancer
 
 ![lb](assets/1-4.png)
 
-> A LB evenly distributes incoming traffic among servers
-
+- Evenly distributes incoming traffic among servers
 - Security
-  - Servers are unreachable directly by clients
-  - Private IPs used for server-server and server-LB communications
+  - Servers are not reachable directly by clients
+  - Private IPs are used for server-server and server-LB communications
 - Availability
-  - Failover, if s1 is down, traffic will be routed to s2
-  - Add more servers anytime if traffic grows
+  - Failover, if s1 is down, traffic will be redirected to s2
+  - We can add more servers anytime if traffic grows
 
-# Database replication
+# 4. Database replication
 
 ![db](assets/1-5.png)
 
@@ -83,7 +82,7 @@
   - Performance
   - Reliability: no data lose
   - Availability
-    - Multi regions replications
+    - Multi-regions replications
     - If slave is down, operations are redirected to master
     - If master is down, a slave is promoted to be master
 
@@ -94,7 +93,7 @@
 > What is the next step?
 > Improve load/response time with cache and CDN
 
-# Cache
+# 5. Cache
 
 ![img](assets/1-7.png)
 
@@ -104,7 +103,7 @@
 
 ## How it works?
 
-server first checks if the cache has the response
+> Server first checks if the cache has the data
 
 1. If it has, server sends data back to client
 2. If not, server goes to DB get data, save to cache, and then sends data back to client
@@ -127,19 +126,19 @@ cache.get('myKey')
   - Overprovision(过度供给) required memory
 - Eviction (驱逐) policy: when cache is full, delete some data (like LRU eviction policy)
 
-# CDN
+# 6. CDN
 
 ## What is CDN?
 
 ![img](assets/1-9.png)
 ![img](assets/1-10.png)
 
-> A CDN is a network of geographically dispersed servers used to deliver static content. C
-> DN servers cache static content like images, videos, CSS, JavaScript files, etc.
+> A CDN is a network of geographically dispersed servers used to deliver static content.
+> CDN servers cache static content like images, videos, CSS, JavaScript files, etc.
 
 ## Workflow
 
-1. A requests image.png to CDN
+1. User A requests image.png to CDN
 2. If CDN does not have the image, CDN gets it from web server or storage
 3. Server returns the image and TTL(Time to Live) to CDN
 4. CDN caches the image and returns to A
@@ -150,7 +149,7 @@ cache.get('myKey')
 
 - Cost
 - Set up cache expiration
-- CDN fallback: check if CDN is health. If not, should return image from servers
+- CDN fallback: check if CDN is health. If not, we should return images from servers
 - Implement invalidating files feature
 - Versioning objects
 
@@ -158,11 +157,11 @@ cache.get('myKey')
 
 ![img](assets/1-11.png)
 
-# Stateless web tier
+# 7. Stateless web tier
 
 > How to scale web tier horizontally
 
-## Stateful and Stateless web tier
+## Stateful vs Stateless web tier
 
 - Stateless
   - Move state (like user session data) out of the web tier and into a shared database (like NoSQL)
@@ -173,19 +172,19 @@ cache.get('myKey')
   - User A is saved in server A; user B is saved in server B. Server B cannot authenticate user A.
   - Request from the same client must be routed to the same server
   - Can be implemented by sticky sessions in most LB
-  - **hard to add or remove servers**
-  - **hard to handle server failures**
+  - **Hard to add or remove servers**
+  - **Hard to handle server failures**
 
 Stateful architecture
 ![img](assets/1-12.png)
 
-stateless architecture
+Stateless architecture
 ![img](assets/1-13.png)
 
-当前设计
+Current design
 ![img](assets/1-14.png)
 
-# Data center
+# 8. Data center
 
 > To improve availability and provide a better user experience across wider geographical areas,
 > supporting multiple data centers is crucial.
@@ -194,18 +193,16 @@ stateless architecture
 
 ## Pros
 
-- Routes requests to the close data center
-- When one data center is down(outage/offline), data center can pick up the traffic
+- Performance: routes requests to the close data center
+- Availability: When one data center is down (outage/offline), data center can pick up the traffic
 
 ## Problems and solutions
 
-- Traffic redirection: redirect traffic based on location, like using GeoDNS
+- Traffic redirection: redirect traffic based on location (use GeoDNS)
 - Data synchronization: replicate data across multiple data centers
-- Test and deployment: make sure servers in different data centers are running successfully, like using automatic deployment tools
+- Test and deployment: make sure servers in different data centers are running successfully (use automatic deployment tools)
 
-# Message queue
-
-> decouple different components so they can be scaled independently
+# 9. Message queue
 
 ![img](assets/1-17.png)
 
@@ -216,13 +213,13 @@ stateless architecture
 ![img](assets/1-17.png)
 
 - Producers/publisher (consumers/subscribers) model
-- Decouple system and then scale independently
+- **Decouple system and then scale independently**
 - Dynamically add/remove servers/workers
 - Failure resilient
 
-# Logging, metrics, automation
+# 10. Logging, metrics, automation
 
-## logging
+## Logging
 
 - Monitor error logs
 - Info for each server
@@ -242,14 +239,14 @@ stateless architecture
 
 ![img](assets/1-19.png)
 
-# Database scaling
+# 11. Database scaling
 
 ![img](assets/1-20.png)
 
 ## Vertical scaling (scale up)
 
 - Better machine, CPU, RAM (AWS can scale to 24TB), DISK....
-  - 2013, stackoverflow used one master database to handle 10,000,000 monthly visit
+  - In 2013, stackoverflow used one master database to handle 10,000,000 monthly visit
 - Cons
   - hardware limits
   - risk of single point of failures
@@ -258,9 +255,9 @@ stateless architecture
 ## Horizontal scaling (sharding)
 
 > Sharding separates large DB into smaller, more easily managed parts called shards.
-> Each shard shares the same schema. Actual data on each shard is unique.
+> Each shard shares the same schema, but actual data on each shard is unique.
 
-### How to?
+### How to sharding?
 
 - Add more servers
 - Separate data based on **hash functions**, then save data into different shards
@@ -273,11 +270,11 @@ stateless architecture
   - When uneven data distribution
   - **Solution: Consistent hash**
 - Celebrity problem (hotspot key problem)
-  - Specific shards is overload because of celebrity data.
-  - Solution: put only one or few celebrities on on server
+  - Specific shards are overloaded because of celebrity data
+  - Solution: put only one or few celebrities on one server
 - Join and de-normalization
-  - Data is in different shards, it is hard to join.
-  - Solution: de-normalize DB. Collect frequent data in different shards into one table to improve efficiency.
+  - Data is in different shards, it is hard to join
+  - Solution: de-normalize DB. Collect frequent data in different shards into one table to improve performance
 
 > Separate data with user_id % 4
 
@@ -288,7 +285,7 @@ stateless architecture
 
 ![img](assets/1-23.png)
 
-# Millions of users and beyond
+# 12. Millions of users and beyond
 
 - Keep web tier stateless
 - Build redundancy at every tier
