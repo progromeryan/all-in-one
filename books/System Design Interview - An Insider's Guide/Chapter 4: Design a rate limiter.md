@@ -74,11 +74,11 @@ https://cloud.google.com/api-gateway
 
 ## 2.2 Rate limiting algorithm
 
-### 2.2.1 Token bucket (widely used for tate limiting)
+### 2.2.1 Token bucket (widely used for rate limiting)
 
 - Two parameters
-  - bucket size: max token number
-  - refill rate: how many tokens put into a bucket periodically
+  - Bucket size: max token number
+  - Refill rate: how many tokens put into a bucket periodically
 - Put tokens into a bucket, like 4 tokens/min
 - Every request consumes a token
 - When a request comes in, check if we have tokens
@@ -194,16 +194,16 @@ One time window per second, counter is 3
 
 # Step 3 - Design deep dive
 
-两个问题没有解决
+> Two problems for current design
 
-- How are rate limiting rules created? Where are the rules stored?
-- How to handle requests that are rate limited?
+1. How to create and store rate limiting rules
+2. How to handle requests that are rate limited
 
-## Rate limiting rules
+## 3.1 Rate limiting rules
 
-lyft 的设计, 把配置文件存在 disk 上
+> Saves rate limiting rules on disk
 
-allow a maximum of 5 marketing messages per day.
+Allow a maximum of 5 marketing messages per day.
 
 ```yaml
 domain: messaging
@@ -215,7 +215,7 @@ descriptors:
       requests_per_unit: 5
 ```
 
-用户不能一分钟登录超过 5 次
+Users cannot login 5 times per minute.
 
 ```yaml
 domain: auth
@@ -227,75 +227,87 @@ descriptors:
       requests_per_unit: 5
 ```
 
-## exceeding the rate limit
+## 3.2 handle requests exceeding the rate limit
 
-- 超过限制, 返回 429 code
-- 可以把超过限制的 request 放到 queue 中, 稍后处理
+### 3.2.1 Two ways
 
-## rate limiter header
+1. Return 429 status code
+2. Put exceeding requests into a job queue, and handle later
+
+### 3.2.2 Rate limiter headers
 
 可以在 response 的 header 中加入一些信息, 告诉 client 超过了限制次数
 
-- X-Ratelimit-Remaining: The remaining number of allowed requests within the window.
-- X-Ratelimit-Limit: It indicates how many calls the client can make per time window.
-- X-Ratelimit-Retry-After: The number of seconds to wait until you can make a request again without being throttled.
+> We can put info about rate limit into response header
 
-## detailed design
+- X-Ratelimit-Remaining: remaining number of allowed requests within the window
+- X-Ratelimit-Limit: many calls the client can make per time window
+- X-Ratelimit-Retry-After: number of seconds to wait until you can make a request again without being throttled
 
-![img](assets/38.png)
+## 3.3 Current design
 
-- rules are stored on the disk. Workers frequently pull rules from the disk and store them in the cache
-- 当有一个 request 的时候, request 会被发送到 rate limiter middleware
-- rate limiter middleware
-  - load rules from cache
-  - fetch counter from redis
-- 如果 request 没有超过 counter, 发送 request 到 server
-- 如果 request 超过 counter, rate limiter 返回 429; 同时, request 被 dropped 或者被推送到 queue
+![img](assets/4-13.png)
 
-## Rate limiter in a distributed environment
+- Store rules on the disk
+- Workers frequently pull rules from the disk and store them in the cache
+- When a request comes in, request are sent to rate limiter middleware
+- Rate limiter middleware
+  - Load rules from cache
+  - Fetch counter from redis
+- If request < counter, send request to server
+- If request > counter
+  - Rate limiter returns 429 status code
+  - Request is dropped or put into a job queue
 
-### race condition
+## 3.4 Rate limiter in a distributed environment
 
-- 发生在 highly concurrent environment
-  - 假设当前的 counter 是 3, 两个 request 同时读取 redis 中的 counter, 最后更新为 4, 但是实际上应该是 5
-- 通常可以使用 lock(会使系统变慢)
-- 更好的方法是 Lua script 和 sorted sets data structure in redis
+### 3.4.1 Race condition
 
-![img](assets/39.png)
+- Happen in highly concurrent environment
+  - Assume counter=3
+  - Two requests read counter from Redis at the same time
+  - After that, count is updated to 4, but it should be 5
+- Common solution
+  - Lock
+  - System becomes slow
+- Better solution
+  - Lua script and sorted sets data structure in Redis
 
-### synchronization issue
+![img](assets/4-14.png)
 
-- 当有多个 rate limiter server 的时候, 同步很重要
-- 因为 web tier 是 stateless 的, 所以 client 可以发送到任意的 rate limiter server 上, 这样就会造成计数错误
-- 解决方法是使用 centralized data stores, like redis
+### 3.4.2 Synchronization issue
 
-![img](assets/40.png)
-![img](assets/41.png)
+- Multiple rate limiter servers
+- Since web tier is stateless, client can send request to any rate limiter server. The counter is not right in some cases.
+- Solution: centralized data stores, like using Redis
 
-### performance optimization
+![img](assets/4-15.png)
+![img](assets/4-16.png)
 
-- multi-data center 很重要
-  - 降低 latency(Latency is the time it takes for data to be transferred between its original source and its destination)
-- synchronize data with an eventual consistency model
+## 3.5 Performance optimization
 
-### Monitoring
+- Multi-data center
+  - Reduce latency
+  - Latency is the time it takes for data to be transferred between its original source and its destination
+- Synchronize data with an eventual consistency model
 
-- The rate limiting algorithm is effective.
-- The rate limiting rules are effective.
+## 3.6 Monitoring
 
-- 如果 rule 太过于严格, 可以放款 rule
-- rate limiter becomes ineffective when there is a sudden increase in traffic like flash sales. In this scenario, we may replace the algorithm to support burst traffic. Token bucket is a good fit here.
+- Check if rate limiting algorithm is effective
+- Check if rate limiting rules are effective
+- If rules are too strict -> relax rules
+- Rate limiter becomes ineffective when there is a sudden increase in traffic like flash sales. In this case, we can replace the algorithm to support burst traffic. Token bucket is a good fit here.
 
 # Step 4 - Wrap up
 
-- 讨论各种算法的优缺点
-- 讨论 system architecture, distributed environment, performance optimization, monitoring
-- hard vs soft rating limiting
-  - Hard: The number of requests cannot exceed the threshold.
-  - Soft:  Requests can exceed the threshold for a short period.
-- rate limiting at different levels
-- avoid being rate limited
-  - use client cache to avoid making frequent API calls
-  - dont send too many requests in a short time frame
-  - catch exceptions
-  - retry logic
+- Discuss pros and cons for algorithms
+- Discuss system architecture, distributed environment, performance optimization, monitoring...
+- Discuss hard vs soft rating limiting
+  - Hard: number of requests cannot exceed the threshold
+  - Soft: requests can exceed the threshold for a short period
+- Rate limiting at different levels
+- Avoid being rate limited
+  - Use client cache to avoid making frequent API calls
+  - Don't send too many requests in a short time
+  - Catch exceptions
+  - Retry logic
