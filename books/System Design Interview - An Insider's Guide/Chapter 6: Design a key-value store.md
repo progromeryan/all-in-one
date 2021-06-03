@@ -1,64 +1,61 @@
-# Design a Key-value store
+# Design A Key-Value Store
 
-popular key-value store system
+Popular key-value store system
 
 - Dynamo
 - Cassandra
 - BigTable
 
-# Understand the problem and establish design scope
+# 1. Understand the problem and establish design scope
 
-Design 通常面临的妥协
+> Design is the tradeoffs
 
-- read, write <-> memory usage
-- consistency <-> availability
+- Read/Write/Memory
+- Consistency/Availability
 
-本文要实现的 key-value store
+> key-value store requirements
 
-- The size of a key-value pair is small: less than 10 KB.
-- Ability to store big data.
-- High availability: The system responds quickly, even during failures.
-- High scalability: The system can be scaled to support large data set.
-- Automatic scaling: The addition/deletion of servers should be automatic based on traffic.
-- Tunable consistency.
-- Low latency.
+- The size of a key-value pair is small: less than 10 KB
+- Ability to store big data
+- High availability: system responds quickly, even during failures
+- High scalability: system can be scaled to support large data set
+- Automatic scaling: addition/deletion of servers should be automatic based on traffic
+- Tunable consistency
+- Low latency
 
-## Single server key-value store
+## 1.1 Single server key-value store
 
-- store key-value pairs in a hash table
-- in memory
-- optimization
+- Store key-value pairs in a hash table
+- In memory
+- Optimization
   - data compression
   - store only frequently used data in memory and the rest on disk
 
-## distributed key-value store (distributed hash table)
+## 1.2 Distributed key-value store (distributed hash table)
 
-每当设计 distributed system 的时候, 我们要考虑 CAP(consistency, availability, partition tolerance)
+### CAP theorem (consistency, availability, partition tolerance)
 
-### CAP theorem
+> CAP is crucial for distributed system
 
-无法保证 CAP 中的三点同时满足
-
-- consistency: data 在任何时候保持一致
-- availability: 即使某些 server 坏了, 也能得到 response
-- partition tolerance
-  - partition: communication break between two nodes
-  - partition tolerance: 即使 network partition, 系统仍然可以正常运行
+- Impossible to guarantee CAP simultaneously
+- Consistency: all clients see same data at same time
+- Availability: even some servers are down, clients can get responses
+- Partition tolerance
+  - Partition: communication break between two nodes
+  - Partition tolerance: even network partition, system is still working
+- **We have to choose between consistency and availability since partition cannot be avoid**
+- Ideal situation
+  - Network partition never happen
+  - Write to n1, n2 and n3 are updated (CA)
+- Real-world distributed system
+  - Partition will happen
+  - When partition happens, We have to choose between consistency and availability
 
 ![img](assets/6-1.png)
 
-CA 不可能实现, 因为无法保证不出现 network partition 的情况
-
 ![img](assets/6-2.png)
 
-- ideal situation
-  - network partition 永远不发生
-  - 数据写入 n1 会被自动备份到 n2 和 n3 (CA 满足)
-- real-world distributed system
-  - partition 无法避免
-  - 当 partition 发生时, 我们必须在 C 和 A 中做出选择
-
-![img](assets/6-2.png)
+![img](assets/6-3.png)
 
 如上图, n3 坏了, 不能和 n1, n2 沟通. 此时, 如果用户向 n1 或 n2 写入数据, n3 不会得到数据更新. 如果数据在 n3 坏了之前写到了 n3, 并且还没有更新到 n1 和 n2, 那么 n1 和 n2 就无法得到数据更新.
 
