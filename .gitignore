@@ -13,3 +13,5 @@ vendor
 
 _leetcode/java/out/**
 _leetcode/out/**
+
+**/out

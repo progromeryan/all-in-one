@@ -272,6 +272,7 @@ descriptors:
   - System becomes slow
 - Better solution
   - Lua script and sorted sets data structure in Redis
+  - Lua (/ˈluːə/) is a lightweight, high-level, multi-paradigm **programming language** designed primarily for embedded use in applications.
 
 ![img](assets/4-14.png)
 

@@ -32,16 +32,16 @@ a_file.writelines(list_of_lines)
 a_file.close()
 
 # java file
-java_folder_name = "_" + filename.split(".")[0]
-path = os.path.join(cwd, "_leetcode", "java", "src", java_folder_name)
+# java_folder_name = "_" + filename.split(".")[0]
+# path = os.path.join(cwd, "_leetcode", "java", "src", java_folder_name)
 
-if not os.path.exists(path):
-    os.makedirs(path)
+# if not os.path.exists(path):
+#     os.makedirs(path)
 
-output = os.path.join(cwd, "_leetcode", "java", "src", java_folder_name, "Solution.java")
+# output = os.path.join(cwd, "_leetcode", "java", "src", java_folder_name, "Solution.java")
 
-a_file = open(output, "a+")
+# a_file = open(output, "a+")
 
-line = "package " + java_folder_name + ";" + "\n" + "import java.util.*;\n" + "import structures.*;\n\n"
-a_file.write(line)
-a_file.close()
+# line = "package " + java_folder_name + ";" + "\n" + "import java.util.*;\n" + "import structures.*;\n\n"
+# a_file.write(line)
+# a_file.close()

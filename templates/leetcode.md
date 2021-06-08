@@ -13,7 +13,7 @@ similar:
 
 ## Problem
 
-![image tooltip here](./assets/356-1.png)
+![img](./assets/356-1.png)
 
 ## Code
 
