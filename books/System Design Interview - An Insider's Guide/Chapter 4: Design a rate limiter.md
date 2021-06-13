@@ -17,7 +17,7 @@
 
 ## Rate limiter benefits
 
-- Prevent **Denial of Service (DoS)** attack: Flood the targeted machine or resource with superfluous requests in an attempt to overload systems and prevent some or all legitimate requests
+- Prevent **Denial (拒绝) of Service (DoS)** attack: Flood the targeted machine or resource with superfluous requests in an attempt to overload systems and prevent some or all legitimate requests
 - Reduce cost
 - Prevent servers from being overloaded
 

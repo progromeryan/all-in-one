@@ -1,8 +1,8 @@
 # Design a notification system
 
-Three types of notifications:
+> Three types of notifications:
 
-- mobile push notification
+- Mobile push notification
 - SMS message
 - Email
 
@@ -10,7 +10,7 @@ Three types of notifications:
 
 # Step 1: Understand the problem and establish design scope
 
-## 可能问的问题
+## Problems and answers
 
 - Candidate: What types of notifications does the system support?
 - Interviewer: Push notification, SMS message, and email.
@@ -27,111 +27,114 @@ Three types of notifications:
 
 # Step 2: Propose high-level design and get buy-in
 
-- different types if notifications
-- contact info gathering flow
-- notification sending/receiving flow
+- Different types if notifications
+- Contact info gathering flow
+- Notification sending/receiving flow
 
-## Different types of notifications
+## 2.1 Different types of notifications
 
-### IOS push notification
+### 2.1.1 IOS push notification
 
 ![img](assets/10-2.png)
 
-- provider
+- Provider
   - build, send notification request to Apple Push Notification Service (APNS)
-  - 发送
-    - device token: unique ID for sending push notifications
-    - payload: push title, content....
+  - Sending
+    - Device token: unique ID for sending push notifications
+    - Payload: push title, content....
 - APNS
   - Apple service to push notification to IOS devices
 - IOS
-  - end client to receive notifications
+  - End client to receive notifications
 
-### android push notification
+### 2.1.2 Android push notification
 
 ![img](assets/10-3.png)
 
-与 ios 类似, 但是使用 FCM
+- Similar to IOS, but use FCM
 
-### SMS message
+### 2.1.3 SMS message
 
 ![img](assets/10-4.png)
 
-SMS messages 通常使用第三方服务, 比如 Twilio, Nexmo 等
+> SMS messages typically use third-party services,like Twilio, Nexmo...
 
-### Email
+### 2.1.4 Email
 
-可以选择一些第三方的 email service, 比如 sendgrid, Mailchimp. 提供 delivery rate 和 data analytics
+> Third-party email services, like sendgrid, Mailchimp... providing with delivery rate and data analytics
 
 ![img](assets/10-5.png)
 
-Design including all third-party service
+> Design including all third-party service
 
 ![img](assets/10-6.png)
 
-## Contact info gathering flow
+## 2.2 Contact info gathering flow
 
-需要获取 mobile device tokens, phone number, email address... 当用户第一次安装并且注册 app 的时候, API servers 手机用户的信息并存在 db 中
+- We need to collect mobile device tokens, phone number, email address...
+- When user register app, API servers save info to db
 
 ![img](assets/10-7.png)
 
-db tables
+> db tables
 
 ![img](assets/10-8.png)
 
-## Notification sending/receiving flow
+## 2.3 Notification sending/receiving flow
 
-### high-level design
+### 2.3.1 High-level design - v1
 
 ![img](assets/10-9.png)
 
-- service 1 to N
-  - service 可以是 microservice, cron job, distributed system...
-- notification system
-  - provides API for service 1 to N
-  - build notification payload for third-party services
-- third-party services
-  - deliver notification to users
-  - 注意 extensibility
-  - 注意某些 third-party service 在某些地区可能不能用
+- Service 1 to N
+  - Service can be microservice, cron job, distributed system...
+- Notification system
+  - Provides API for service 1 to N
+  - Build notification payload for third-party services
+- Third-party services
+  - Deliver notification to users
+  - Extensibility
+  - Third-party service might be unavailable in some regions
 - IOS, Android, SMS, Email
-  - users receive notification on devices
+  - Users receive notification on devices
 
-存在的问题:
+### 2.3.2 Problems
 
-- single point of failure, 只有一个 server
-- hard to scale
-- performance bottleneck
+- Single point of failure
+- Hard to scale
+- Performance bottleneck
 
-### high-level design - improved
+### 2.3.3 High-level design - v2
 
-- move db and cache out of the notification server
-- add more servers and set up automatic horizontal scaling
-- introduce message queue to decouple the system components
+- Move db and cache out of the notification server
+- Add more servers and set up automatic horizontal scaling
+- Introduce message queue to decouple the system components
 
 ![img](assets/10-10.png)
 
-- service 1 to N: different services send notifications via APIs provided by notification servers
+- Service 1 to N: different services send notifications via APIs provided by notification servers
 - Notification servers
-  - provide APIs for services to send notifications
-  - basic validations for emails, phone numbers...
-  - query db or cache to get needed data to render a notification
-  - put notification data to message queues for parallel processing
-- cache
-  - user info, device info, notification templates are cached
+  - Provide APIs for services to send notifications
+  - Basic validations for emails, phone numbers...
+  - Query db or cache to get needed data to render a notification
+  - Put notification data to message queues for parallel processing
+- Cache
+  - User info
+  - Device info
+  - Notification templates
 - DB
-  - stores data about users, notification, settings...
-- message queue
-  - remove dependencies between components
-  - server as buffers when high volumes of notifications
-  - each type of notification is assigned to a distinct message queue
-- workers
-  - pull notification events from message queues
-  - send message to third-party services
-- third-party service
+  - Stores data about users, notification, settings...
+- Message queue
+  - Remove dependencies between components
+  - Server as buffers when high volumes of notifications
+  - Each type of notification is assigned to a distinct message queue
+- Workers
+  - Pull notification events from message queues
+  - Send message to third-party services
+- Third-party service
 - IOS, Android, SMS, Email
 
-API 举例
+### 2.3.4 API Examples
 
 POST https://api.example.com/v/sms/send
 
@@ -155,92 +158,76 @@ request body
 }
 ```
 
-工作流程
+> Workflow
 
-- a service call APIs provided by notification servers
-- notification servers fetch metadata, like user info, device token, and notification setting from cache or db
-- notification event is sent to corresponding queue for processing
-- workers pull notification events from message queues
-- workers send notifications to third party services
-- third-party service send notifications to user devices
+- A service call APIs provided by notification servers
+- Notification servers fetch metadata, like user info, device token, and notification setting from cache or db
+- Notification event is sent to corresponding queue for processing
+- Workers pull notification events from message queues
+- Workers send notifications to third-party services
+- Third-party service send notifications to user devices
 
 # Step 3: Design deep dive
 
-## Reliability
+## 3.1 Reliability
 
-### how to prevent data loss?
+### 3.1.1 How to prevent data loss?
 
 ![img](assets/10-11.png)
 
-- save notification data in db
-- implement retry mechanism
-- notification log database for data persistence
+- Save notification data in db
+- Implement retry mechanism
+- Notification log database for data persistence
 
-### will recipients receive a notification exactly once?
+### 3.1.2 Will recipients receive a notification exactly once?
 
-有可能导致重复推送. 为了防止重复推送发生
+> We should avoid duplicate notifications
 
-- 当收到一个 notification event 的时候, 先查看 event ID
-- 如果已经存在这个 event ID, 就放弃当前推送
-- 如果不存在这个 event ID, 就进行推送
+- When receive a notification event, first check event ID
+- If event ID is existing, drop current event
+- If event ID is not existing, move forward
 
-## Additional components and consideration
+## 3.2 Additional components and consideration
 
-### notification template
+- Notification template
+  - A lof of notifications are similar, so we need templates
+  - Efficiency
+  - Fault tolerance
+  - Save time
+- Notification setting
+  - Save user's notification setting in table
+  - If some users don't want to receive notifications, we save it to db, and check it before sending
+- Rate limiting
+  - Limit the number of notifications a user can receive
+  - Users probably turn off notifications if they receive too many
+- Retry mechanism
+  - When third-party cannot send notification, we should put notification to queue and retry
+  - If retry does not work, we should send alert to developers
+- Security in push notification
+  - IOS and Android have their own security methods, like only authenticated clients can send notification
+- Monitor queued notification
+  - Total number of queued notifications
+  - If too many jobs, we should add more workers ![img](assets/10-12.png)
+- Events tracking
+  - Open rate
+  - Click rate
+  - Engagement![img](assets/10-13.png)
 
-- 很多 notification 都很类似, 所以需要一个 template
-- 提高效率, 避免错误, 节省时间
-
-### notification setting
-
-- 把用户对 notification 的设置存在 setting table 中
-- 如果有些用户设置不接受 notification, 我们把设置存在 db 中, 每次发送之前都要检查这个 db
-
-### rate limiting
-
-- limit the number of notifications a user can receive, 防止用户因为收到太多的 notification 而彻底关闭接收
-
-### retry mechanism
-
-- 当 third-party 没有推送成功,notification 需要被重新放到 queue 中, 然后 retry
-- 如果多次重试都未成功, 需要发送 alert 给开发人员
-
-### security in push notification
-
-- IOS 和 Android 有自己的 security 方法, 只有授权的 client 才能发送推送
-
-### monitor queued notification
-
-- total number of queued notifications
-- 如果数量过大, 那么需要增加 worker 的数量
-
-![img](assets/10-12.png)
-
-### events tracking
-
-notification metrics
-
-- open rate
-- click rate
-- engagement
-
-![img](assets/10-13.png)
-
-## Update design
+## 3.3 Update design
 
 ![img](assets/10-14.png)
 
-- notification servers
-  - authentication
-  - rate limit
-- add retry mechanism to handle notification failures
-- notification template
-- monitoring and tracking systems
+- Notification servers
+  - Authentication
+  - Rate limit
+- Add retry mechanism to handle notification failures
+- Notification template
+- Monitoring and tracking systems
 
 # Step 4: wrap up
 
 - Reliability: retry mechanism to minimize failure rate
-- security: third-party server verify clients to send notification
-- tracking and monitoring
-- user setting: don't send notifications if user opt-out
-- rate limiting: don't send notifications to a user too frequently
+- Security: third-party server verify clients to send notification
+- Tracking and monitoring
+- User setting: don't send notifications if user opt-out
+- Rate limiting: don't send notifications to a user too frequently
