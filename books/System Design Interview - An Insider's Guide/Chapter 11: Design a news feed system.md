@@ -1,10 +1,12 @@
+# Design a news feed system
+
 > News feed is the constantly updating list of stories in the middle of your home page. News Feed includes status updates, photos, videos, links, app activity, and likes from people, pages, and groups that you follow on Facebook
 
-类似的问题:
+Similar design:
 
-- facebook news feed
-- instagram feed
-- twitter timeline
+- Facebook news feed
+- Instagram feed
+- Twitter timeline
 
 ![img](assets/11-1.png)
 
@@ -25,157 +27,155 @@
 
 # Step 2: Propose high-level design and get buy-in
 
-主要 workflow
+## 2.1 Main workflow
 
-- feed publishing
-  - write data to cache and db
-  - a post is populated to her friends' news feed
-- newsfeed building (显示 feeds)
-  - aggregate friends' posts in reverse chronological order
+- Feed publishing
+  - Write data to cache and db
+  - A post is populated to her friends' news feed
+- Newsfeed building (show feeds)
+  - Aggregate friends' posts in reverse chronological order
 
-## Newsfeed APIs
+## 2.2 Newsfeed APIs
 
-### feed publishing API
+### 2.2.1 Feed publishing API
 
 POST /v1/me/feed
 
-- content: post text
+- Content: post text
 - auth_token: authenticate API requests
 
-### newsfeed retrieval API
+### 2.2.2 Newsfeed retrieval API
 
 GET /v1/me/feed
 
 - auth_token: authenticate API requests
 
-## Feed publishing
+## 2.3 Feed publishing
 
 ![img](assets/11-2.png)
 
-- user
-  - view new feeds on browser or mobile app
-  - post through API /v1/me/feed?content=Hello&auth_token={auth_token}
-- load balancer: distribute traffic to web servers
-- post service: save post to db and cache
-- fanout service
-  - push new content to friends' news feed
-  - newsfeed data is stored in the cache for fast retrieval
-- notification service
-  - inform friends new content is available
-  - send out push notification
+- User
+  - View new feeds on browser or mobile app
+  - Post through API /v1/me/feed?content=Hello&auth_token={auth_token}
+- Load balancer: distribute traffic to web servers
+- Post service: save post to db and cache
+- **Fanout service**
+  - Push new content to friends' news feed
+  - Newsfeed data is stored in the cache for fast retrieval
+- Notification service
+  - Inform friends new content is available
+  - Send out push notification
 
-## newsfeed building
+## 2.4 Newsfeed building
 
 ![img](assets/11-3.png)
 
-- user
-  - send request to retrieve her news feed
+- User
+  - Send request to retrieve her news feed
   - /v1/me/feed
-- load balancer: redirect traffic to web servers
-- web servers: route requests to newsfeed service
-- newsfeed service: fetch news feed from cache
-- newsfeed cache: store new feed IDS needed to render the news feed
+- Load balancer: redirect traffic to web servers
+- Web servers: route requests to newsfeed service
+- Newsfeed service: fetch news feed from cache
+- Newsfeed cache: store new feed IDS needed to render the news feed
 
 # Step 3: Design deep dive
 
-## Feed publishing deep dive
+## 3.1 Feed publishing deep dive
 
 ![img](assets/11-4.png)
 
-### web server
+### 3.1.1 Web server
 
-- authentication: only authenticated users can post
-- rate limiting: 不能无限制的 post
+- Authentication: only authenticated users can post
+- rate limiting: can only make a certain number of posts
 
-### fanout service
+### 3.1.2 Fanout service
 
-Fanout is the process of delivering a post to all friends. Two types of fanout models:
+#### 3.1.2.1 Types
 
-- fanout on write (push model)
-- fanout on read (pull model)
+> Fanout is the process of delivering a post to all friends. Two types of fanout models:
 
-最佳实践是采用 hybrid 方法.
+- Fanout on write - push model
+- Fanout on read - pull model
 
-- fetching news feed 速度很重要, push model 适用于大多数用户
-- celebrities/have many friends/followers, followers pull news content on-demand
+> Best practice is hybrid method
 
-#### fanout on write (push model)
+- Speed is important for fetching news feed, so push model is great for most users
+- Celebrities have many friends/followers, followers should pull news content on-demand
 
-- news feed is **pre-computed** during write time
-- a new post is delivered to friends' cache immediately after it is published
-- 优点
-  - news feed is generated in real-time and can be pushed to friends immediately
-  - fetching news feed is fast because the news feed is pre-computed during write time
-- 缺点
-  - if a user has many friends, fetching the friend list and generating news feeds for all of them are slow. It is called hotkey problem.
-  - for inactive users, pre-computing news feeds waster computing resources
+#### 3.1.2.2 Fanout on write - push model
 
-#### fanout on read (pull model)
+- News feed is **pre-computed** during write time
+- A new post is delivered to friends' cache immediately after it is published
+- Pros
+  - News feed is generated in real-time and can be pushed to friends immediately
+  - Fetching news feed is fast because the news feed is pre-computed during write time
+- Cons
+  - If a user has many friends, fetching the friend list and generating news feeds for all of them are slow. It is called hotkey problem.
+  - For inactive users, pre-computing news feeds waster computing resources
 
-- news feed is generated during read time.
-- an on-demand model
-- recent posts are pulled when a user loads her home page
-- 优点
-  - for inactive users, it will not waste computing resources
-  - no hotkey problem
-- 缺点
-  - fetching the news feed is slow because the news feed is not pre-computed
+#### 3.1.2.3 Fanout on read - pull model
+
+- News feed is generated during read time.
+- On-demand model
+- Recent posts are pulled when a user loads her home page
+- Pros
+  - For inactive users, it will not waste computing resources
+  - No hotkey problem
+- Cons
+  - Fetching the news feed is slow because the news feed is not pre-computed
 
 ![img](assets/11-5.png)
 
-1. fetch friend IDs from graph db
-2. get friends info from user cache, like filtering out muted friends...
-3. send friend list and new post ID to message queue
-4. workers fetch data from message queue and save news feed data in the cache
-   1. news feed cache: <post_id, user_id> mapping table ![img](assets/11-6.png)
-   2. when new post made, append it to the mapping table
-   3. only save post_id and user_id to save memory
-5. store <post_id, user_id> in cache
+1. Fetch friend IDs from graph db
+2. Get friends info from user cache, like filtering out muted friends...
+3. Send friend list and new post ID to message queue
+4. Workers fetch data from message queue and save news feed data in the cache
+   1. News feed cache: <post_id, user_id> mapping table ![img](assets/11-6.png)
+   2. When new post made, append it to the mapping table
+   3. Only save post_id and user_id to save memory
+5. Store <post_id, user_id> in cache
 
-## newsfeed retrieval deep dive
+## 3.2 Newsfeed retrieval
 
 ![img](assets/11-7.png)
 
-workflow
+> Media content are saved in CDN for fast retrieval
 
-> media content are saved in CDN for fast retrieval
+1. User sends a request /v1/me/feed
+2. Load balancer redistributes request to web server
+3. Web servers call news feed service to fetch news feeds
+4. News feed service get a list of post IDs from the news feed cache
+5. News feed service get complete user and post objects from users cache and post cache
+6. Return results
 
-1. user sends a request /v1/me/feed
-2. load balancer redistributes request to web server
-3. web servers call news feed service to fetch news feeds
-4. news feed service get a list of post IDs from the news feed cache
-5. news feed service get complete user and post objects from users cache and post cache
-6. 返回结果
+## 3.3 Cache architecture
 
-## cache architecture
-
-Divide cache tier into 5 layers
+> Divide cache tier into 5 layers
 
 ![img](assets/11-8.png)
 
-- news feed: save IDs of new feeds
-- content: save every post data. popular content is saved in hot cache
-- social graph: save user relationship data
-- action: save actions(like a post, reply a post...)
-- counters: save counters for like, reply, follower, following....
+- News feed: save IDs of new feeds
+- Content: save every post data. Popular content is saved in hot cache
+- Social graph: save user relationship data
+- Action: save actions(like a post, reply a post...)
+- Counters: save counters for like, reply, follower, following....
 
 # Step 4: Wrap up
 
-还可以讨论分话题
+## 4.1 Scale DB
 
-## Scale db
+- Vertical scaling vs horizontal scaling
+- SQL vs NoSQL
+- Master-salve replication
+- Read replicas
+- Consistency models
+- DB sharding
 
-- vertical scaling vs horizontal scaling
-- sdl vs nosql
-- master-salve replication
-- read replicas
-- consistency models
-- db sharding
+## 4.2 Other topic
 
-## other topic
-
-- keep web tier stateless
-- cache data
-- support multiple data centers
-- use message queue to lose couple components
-- monitor key metrics, like QPS, latency...
+- Keep web tier stateless
+- Cache data
+- Support multiple data centers
+- Use message queue to lose couple components
+- Monitor key metrics, like QPS, latency...
