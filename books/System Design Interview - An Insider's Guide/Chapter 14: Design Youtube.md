@@ -1,3 +1,5 @@
+# Design YouTube
+
 ![img](assets/14-1.png)
 
 - Total number of monthly active users: 2 billion.
@@ -9,6 +11,8 @@
 - YouTube is available in 80 different languages.
 
 # Step 1: Understand the problem and establish design scope
+
+## 1.1 Questions and answers
 
 - Candidate: What features are important?
 - Interviewer: Ability to upload a video and watch a video.
@@ -31,250 +35,247 @@
 - Candidate: Can we leverage some of the existing cloud infrastructures provided by Amazon, Google, or Microsoft?
 - Interviewer: That is a great question. Building everything from scratch is unrealistic for most companies, it is recommended to leverage some of the existing cloud services.
 
-## requirements
+## 1.2 Requirements
 
-- upload videos
-- smooth video streaming
-- change video quality
-- low infrastructure cost
-- availability, scalability, reliability
-- mobile apps, web browser, smart TV
+- Upload videos
+- Smooth video streaming
+- Change video quality
+- Low infrastructure cost
+- Availability, scalability, reliability
+- Mobile apps, web browser, smart TV
 
-## back of the envelope estimation
+## 1.3 Back of the envelope estimation
 
 - 5 million DAU
-- users watch 5 videos per day
+- Users watch 5 videos per day
 - 10% users upload 1 video per day
-- average video size is 300 MB
-- daily storage: 5 million _ 10% _ 200 MB = 150 TB
+- Average video size is 300 MB
+- Daily storage: 5 million \* 10% \* 200 MB = 150 TB
 - CDN cost
-  - when CDN serves a video, you are charged by CDN
+  - When CDN serves a video, you are charged by CDN
   - Amazon CDN CloudFront $0.02/GB
   - 5 million \* 5 videos \* 0.3 GM \* 0.02 = $150000 / day
 
 ![img](assets/14-2.png)
 
-on-demand pricing for data transfer to the Internet (per GB)
+> on-demand pricing for data transfer to the Internet (per GB)
 
 # Step 2: Propose high-level design and get buy-in
 
 ![img](assets/14-3.png)
 
-## client
+## 2.1 Client
 
-- watch YouTube on computer, mobile phone, smartTV
+- Watch YouTube on computer, mobile phone, smartTV
 
-## CDN
+## 2.2 CDN
 
-- videos are stored in CDN
-- when play a video, it is streamed from the CDN
+- **Videos are stored in CDN**
+- When play a video, it is **streamed from the CDN**
 
-## API servers
+## 2.3 API servers
 
-- everything else except video streaming goes through API servers
-- feed recommendation
-- generate video upload URL
-- update metadata db, cache, user signup...
+- Everything else except video streaming goes through API servers
+- Feed recommendation
+- Generate video upload URL
+- Update metadata db, cache, user sign up...
 
-## video uploading flow
+## 2.4 Video uploading flow
 
 ![img](assets/14-4.png)
 
-### components
+### 2.4.1 Components
 
-- user: a user watches YouTube
-- load balancer: distributes request to API servers
+- User: a user watches YouTube
+- Load balancer: distributes request to API servers
 - API servers
-- Metadata db
-  - video metadata are stored in db
-  - it is sharded and replicated
-- metadata cache
-  - video metadata and user object are cached
-- original storage
-  - a blob storage system
-  - store original videos
+- Metadata DB (video)
+  - Video metadata are stored in DB
+  - It is sharded and replicated
+- Metadata cache
+  - Video metadata and user object are cached
+- Original storage
+  - A blob storage system
+  - Store original videos
   - A Binary Large Object (BLOB) is a collection of binary data stored as a single entity in a database management system
-- transcoding servers
-  - video encoding
-  - convert a video format fo other formats (MPEG, HLS...) to provide the best video streams for different devices and bandwidth capabilities
-- transcoded storage
-  - blob storage that stores transcoded video files
+- Transcoding servers
+  - Video encoding
+  - Convert a video format fo other formats (MPEG, HLS...) to provide the best video streams for different devices and bandwidth capabilities
+- Transcoded storage
+  - Blob storage that stores transcoded video files
 - CDN
-  - video are cached in CDN
-- completion queue
-  - message queue
-  - stores information about video transcoding completion events
-- completion handler
-  - a list of workers
-  - pull event from completion queue
-  - update metadata cache and db
+  - Video are cached in CDN
+- Completion queue
+  - Message queue
+  - Stores information about video transcoding completion events
+- Completion handler
+  - A list of workers
+  - Pull event from completion queue
+  - Update metadata cache and db
 
-### Flow a: upload the actual video
-
-1. upload video
-2. update video metadata
+### 2.4.2 Flow A: upload the actual video
 
 ![img](assets/14-5.png)
 
-1. videos are uploaded to original storage
-2. transcoding servers fetch videos from original storage and start transcoding
+1. Videos are uploaded to original storage
+2. Transcoding servers fetch videos from original storage and start transcoding
 3. When transcoding is complete
-   1. transcoded videos are sent to transcoded storage
-      1. transcoded videos are distributed to CDN
-   2. transcoding completion events are queued in the completion queue
-      1. completion handler (workers) pull event data from the queue
-      2. completion handler updates metadata db and cache
+   1. Transcoded videos are sent to transcoded storage
+      1. Transcoded videos are distributed to CDN
+   2. Transcoding completion events are queued in the completion queue
+      1. Completion handler (workers) pull event data from the queue
+      2. Completion handler updates metadata db and cache
 4. API servers inform client that video is successfully uploaded and is ready for streaming
 
-### flow b: update the metadata
+### 2.4.3 Flow B: update the metadata
 
 ![img](assets/14-6.png)
 
-- while a video is uploaded to original storage, client in parallel sends request to update video metadata
-- request contains video metadata like file name, size, format...
+- While a video is uploaded to original storage, client in parallel sends request to update video metadata
+- Request contains video metadata like file name, size, format...
 - API servers update the metadata cache and db
 
-## video streaming flow
+## 2.5 Video streaming flow
 
-### download and streaming
+### 2.5.1 Download and streaming
 
-- download: whole video is copied to device
-- streaming
-  - device continuously receives video streams from remote source videos
-  - load a little bit of data at a time
-  - watch videos immediately and continuously
+- Download: whole video is copied to device
+- Streaming
+  - Device continuously receives video streams from remote source videos
+  - Load a little bit of data at a time
+  - Watch videos immediately and continuously
 
-### Streaming protocol
+### 2.5.2 Streaming protocol
 
-- standard way to control data transfer for video streaming
-- popular streaming protocols:
+- Standard way to control data transfer for video streaming
+- Popular streaming protocols:
   - MPEG-DASH: moving picture experts group - dynamic adaptive streaming over HTTP
   - Apple HLS: HTTP Live Streaming
   - Microsoft smooth streaming
   - Adobe HTTP Dynamic Streaming (HDS)
-- videos are streamed from CDN
-- server closest to you will deliver the video
-- little latency
+- Videos are streamed from CDN
+- Server closest to you will deliver the video
+- Little latency
 
 ![IMG](assets/14-7.png)
 
 # Step 3: Design deep dive
 
-## Video transcoding
+## 3.1 Video transcoding
 
-### why video transcoding is important
+### 3.1.1 Why video transcoding is important
 
-- raw video consumes large storage
-- devices and browsers only support certain types of video formats. video need to be encoded to different formats for compatibility reasons
-- deliver high resolution video to high network bandwidth users; deliver low resolution video to low network bandwidth users
-- network conditions can change, like mobile. Switching video quality feature is necessary.
+- Raw video consumes large storage
+- **Devices and browsers only support certain types of video formats.** Video need to be encoded to different formats for compatibility reasons
+- Deliver high resolution video to high network bandwidth users. Deliver low resolution video to low network bandwidth users
+- Network conditions can change, like mobile. Switching video quality feature is necessary.
 
-### encoding formats contains two parts
+### 3.1.2 Encoding formats contains two parts
 
-- container
-  - a basket contains video file, audio, metadata
-  - can tell the container format by file extension, like .avi, .mov, .mp4
-- codec
-  - compression and decompression algorithms
-  - reduce video size while preserving video quality
+- Container
+  - A basket contains video file, audio, metadata
+  - Can tell the container format by file extension, like .avi, .mov, .mp4
+- Codec
+  - Compression and decompression algorithms
+  - Reduce video size while preserving video quality
   - H.264, VP9, HEVC
 
-## directed acyclic graph model (DAG)
+## 3.2 Directed acyclic graph model (DAG)
 
-### requirements
+### 3.2.1 Requirements
 
-- transcoding is time-consuming
-- content creators have different requirements, like watermarks
-- different video processing pipeline
-- maintain high parallelism
-- define tasks to execute
+- Transcoding is time-consuming
+- Content creators have different requirements, like watermarks
+- Different video processing pipeline
+- Maintain high parallelism
+- Define tasks to execute
 
-### DAG (facebook)
+### 3.2.2 DAG (facebook)
 
 ![IMG](assets/14-8.png)
 
-- define tasks in stages so they can be executed sequentially or parallelly
-- video tasks
-  - inspection
-    - videos have good quality
-    - not malformed
-  - video encodings
-    - videos are converted to support different resolutions, codec...
-  - thumbnail
-    - can be uploaded by a user or automatically generated
-  - watermark
-    - an image overlay contains identifying info about the video
+- Define tasks in stages so they can be executed sequentially or parallelly
+- Video tasks
+  - Inspection
+    - Videos have good quality
+    - Not malformed
+  - Video encodings
+    - Videos are converted to support different resolutions, codec...
+  - Thumbnail
+    - Can be uploaded by a user or automatically generated
+  - Watermark
+    - An image overlay contains identifying info about the video
 
 ![img](assets/14-9.png)
 
-## video transcoding architecture
+## 3.3 Video transcoding architecture
 
 ![img](assets/14-10.png)
 
-### preprocessor
+### 3.3.1 Preprocessor
 
 ![img](assets/14-11.png)
 
-- video splitting
-  - video stream is split into smaller group of pictures (GOP) alignment
+- Video splitting
+  - Video stream is split into smaller **group of pictures (GOP)** alignment
   - GOP is a chunk of frames arranged in a specific order
-  - each chunk is an independently playable unit
-  - each chunk is a few seconds in length
-- some old devices or browsers do not support video splitting. preprocessor split video by GOP alignment for them.
+  - Each chunk is an independently playable unit
+  - Each chunk is a few seconds in length
+- Some old devices or browsers do not support video splitting. Preprocessor split video by GOP alignment for them.
 - DAG generation
-  - processor generates DAG based on configuration files client programmers write
-- cache data
-  - preprocessor is a cache for segmented videos
-  - preprocessor stores GOPs and metadata in temporary storage
-  - if encoding fails, system can use persisted data for retry
+  - Processor generates DAG based on configuration files client programmers write
+- Cache data
+  - Preprocessor is a cache for segmented videos
+  - Preprocessor stores GOPs and metadata in temporary storage
+  - If encoding fails, system can use persisted data for retry
 
 ![img](assets/14-12.png)
 ![img](assets/14-13.png)
 
-simplified DAG representation, has 2 nodes and 1 edge. The DAG is generated from the two configurations files.
+> Simplified DAG representation, has 2 nodes and 1 edge. The DAG is generated from the two configurations files.
 
-### DAG scheduler
+### 3.3.2 DAG scheduler
 
 ![img](assets/14-14.png)
 
 ![img](assets/14-15.png)
 
 - DAG scheduler splits a DAG graph into stages of tasks and put them in the task queue in the resource manager.
-- split original video into 2 stages
-  - stage 1: video, audio, metadata
-  - stage 2: video -> video encoding, thumbnail. audio -> audio encoding
+- Split original video into 2 stages
+  - Stage 1: video, audio, metadata
+  - Stage 2: video -> video encoding, thumbnail. audio -> audio encoding
 
-### Resource manager
+### 3.3.3 Resource manager
 
 ![img](assets/14-16.png)
 ![img](assets/14-17.png)
 
-#### Functions and Components
+#### 3.3.3.1 Functions and Components
 
-- resource allocation
-- contains 3 queues and a task scheduler
-- task queue
-  - priority queue
-  - contains tasks to be executed
-- worker queue
-  - priority queue
-  - worker utilization info
-- running queue
-  - currently running tasks info
-  - workers info
-- task scheduler
-  - pick optimal task/worker
-  - instruct the chosen task worker to execute the job
+- Resource allocation
+- Contains 3 queues and a task scheduler
+- Task queue
+  - Priority queue
+  - Contains tasks to be executed
+- Worker queue
+  - Priority queue
+  - Worker utilization info
+- Running queue
+  - Currently running tasks info
+  - Workers info
+- Task scheduler
+  - Pick optimal task/worker
+  - Instruct the chosen task worker to execute the job
 
-#### Workflow
+#### 3.3.3.2 Workflow
 
-1. task scheduler gets the highest priority task from the task queue
-2. task scheduler gets the optimal task worker to run the task from the worker queue
-3. task scheduler instructs the chosen task worker to run the task
-4. task scheduler binds the task/worker info and puts it in the running queue
-5. task scheduler removes the job from the running queue once the job is done
+1. Task scheduler gets the highest priority task from the task queue
+2. Task scheduler gets the optimal task worker to run the task from the worker queue
+3. Task scheduler instructs the chosen task worker to run the task
+4. Task scheduler binds the task/worker info and puts it in the running queue
+5. Task scheduler removes the job from the running queue once the job is done
 
-### Task workers
+### 3.3.4 Task workers
 
 ![img](assets/14-18.png)
 ![img](assets/14-19.png)
@@ -282,105 +283,105 @@ simplified DAG representation, has 2 nodes and 1 edge. The DAG is generated from
 - Task workers run the tasks defined in the DAG.
 - Different task workers run different tasks
 
-### Temporary storage
+### 3.3.5 Temporary storage
 
 ![img](assets/14-20.png)
 
-- multiple storage systems are used
-- metadata
-  - frequently accessed
-  - small size
-  - cache in memory
-- video/audio
-  - blob storage
-- data is freed up once the processing is complete
+- Multiple storage systems are used
+- Metadata
+  - Frequently accessed
+  - Small size
+  - Cache in memory
+- Video/audio
+  - Blob storage
+- Data is freed up once the processing is complete
 
-### Encoding video
+### 3.3.6 Encoding video
 
 ![img](assets/14-21.png)
 
-- final output of the encoding pipeline
-- example: funny_720p.mp4
+- Final output of the encoding pipeline
+- Example: funny_720p.mp4
 
-## System optimizations
+## 3.4 System optimizations
 
-### Speed optimization: parallelize video uploading
+### 3.4.1 Speed optimization: parallelize video uploading
 
 ![img](assets/14-22.png)
 
-- upload a video as a whole unit is not efficient
-- split a video into smaller chunks by GOP alignment
-- fast resumable uploads from previous failure
-- split can be implemented by client to improve upload speed
+- Upload a video as a whole unit is not efficient
+- Split a video into smaller chunks by GOP alignment
+- Fast resumable uploads from previous failure
+- Split can be implemented by client to improve upload speed
 
 ![img](assets/14-23.png)
 
-### Speed optimization: place upload center close to users
+### 3.4.2 Speed optimization: place upload center close to users
 
 ![img](assets/14-24.png)
 
-- multiple upload centers
-- use CDN as upload centers
+- Multiple upload centers
+- Use CDN as upload centers
 
-### Speed optimization: parallelism everywhere
+### 3.4.3 Speed optimization: parallelism everywhere
 
 ![img](assets/14-25.png)
 
-- current design
-  - output depends on the input of the previous step
-  - dependency makes parallelism difficult
-- build loosely coupled system
-- enable high parallelism
-- **message queue** is a great tech to decouple
-  - before message queue: encoding module must wait until the download module is done
-  - after message queue: encoding module can execute jobs in message queue in parallel, no more waiting
+- Current design
+  - Output depends on the input of the previous step
+  - Dependency makes parallelism difficult
+- Build loosely coupled system
+- Enable high parallelism
+- **Message queue** is a great tech to decouple
+  - Before message queue: encoding module must wait until the download module is done
+  - After message queue: encoding module can execute jobs in message queue in parallel, no more waiting
 
 ![img](assets/14-26.png)
 
-### Safety optimization: pre-signed upload URL
+### 3.4.4 Safety optimization: pre-signed upload URL
 
 ![img](assets/14-27.png)
 
-1. clients request pre-signed URL
+1. Clients request pre-signed URL
 2. API servers return pre-signed URL
-3. clients use pre-signed URL uploads video
+3. Clients use pre-signed URL uploads video
 
-### Safety optimization: protect videos
+### 3.4.5 Safety optimization: protect videos
 
-- digital rights management (DRM) systems
+- Digital rights management (DRM) systems
   - Apple FairPlay
   - Google Widevine
   - Microsoft PlayReady
 - AES encryption
-  - encrypt a video
-  - configure an authorization policy
-  - only authorized users can watch an encrypted video
-- visual watermarking
-  - image overlay on top of the video
+  - Encrypt a video
+  - Configure an authorization policy
+  - Only authorized users can watch an encrypted video
+- Visual watermarking
+  - Image overlay on top of the video
 
-### cost-saving optimization
+### 3.4.6 Cost-saving optimization
 
 ![img](assets/14-28.png)
 
 - CDN is expensive
-- popular videos from CDN
-- less popular videos are from high capacity storage video servers
-- less popular less encoded video versions
-- some videos are only popular in certain regions. no need to distribute them to other regions
-- build own CDN, like Netflix
+- Popular videos from CDN
+- Less popular videos are from high capacity storage video servers
+- Less popular less encoded video versions
+- Some videos are only popular in certain regions. no need to distribute them to other regions
+- Build own CDN, like Netflix
 
-## Error handling
+## 3.5 Error handling
 
-- recoverable error
-  - example: video segment fails to transcode
-  - solution: retry; return error code
-- non recoverable error
-  - example: malformed video format
-  - solution: stop running and return error code
+- Recoverable error
+  - Example: video segment fails to transcode
+  - Solution: retry; return error code
+- Non recoverable error
+  - Example: malformed video format
+  - Solution: stop running and return error code
 
 # Step 4: Wrap up
 
 - Scale the API tier
-- Scals the db
+- Scale the db
 - Live streaming: record and broadcasted in real time
 - video takedowns: remove illegal videos

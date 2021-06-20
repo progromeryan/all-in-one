@@ -50,7 +50,8 @@
 ![img](assets/12-3.png)
 
 - Client periodically ask the server if there are messages available
-- Costly, inefficient
+- Costly
+- Inefficient
 
 ## 2.3 Long polling
 
@@ -128,7 +129,7 @@
 
 - Easy horizontal scaling
 - Low latency
-- Relational db do not handle long tail of data. When indexes grow, random access is expensive
+- Relational DB does not handle long tail of data. When indexes grow, random access is expensive
 - Popular chat apps are using it (facebook - HBase, discord - Cassandra)
 
 ## 2.6 Data models
@@ -165,7 +166,7 @@
 ## 3.1 Service discovery
 
 - Recommend the best chat server for a client
-- Based on criteria like geographical location, server capacity
+- Based on criteria like geographical location, server capacity....
 - Apache Zookeeper is a solution
   - Register all available chat servers
   - Picks the best chat server for a client based on predefined criteria
@@ -176,9 +177,9 @@
 
 > Workflow
 
-1. User tries to log in
+1. Log in
 2. Load balancer sends login request to API servers
-3. After authentication, service discovery finds the best chat server for the user (server 2 is the best now), and return to the user
+3. After authentication, service discovery finds the best chat server for the user (for example, server 2 is the best now), and return to the user
 4. User connect chat server 2 through WebSocket
 
 ## 3.2 Message flows
