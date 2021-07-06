@@ -1,10 +1,8 @@
-package _297;
+给定一个通讯录, 输入前几个字母, 就可以显示左右以这几个字母开头的联系人列表
 
-import structures.TreeNode;
+Trie
 
-import java.util.*;
-
-
+```java
 class Contact {
     class TrieNode {
         TrieNode[] children;
@@ -87,3 +85,6 @@ class Contact {
         System.out.println(res);
     }
 }
+```
+
+time: search O(26^M)

@@ -4,80 +4,130 @@
 > push(int a) 将 a 放入队尾
 > 每个操作的 average time complexity O(logn)
 
+类似 716 Max stack
+
 ```java
-import java.util.*;
-
-public class MaxQueue {
-
-    LinkedList<Integer> queue;
-    TreeMap<Integer, List<Integer>> map;
-    int headIndex;
+class MaxQueue {
+    TreeMap<Integer, List<Node>> map;
+    DoubleLinkedList dll;
 
     public MaxQueue() {
-        queue = new LinkedList<>();
-        map = new TreeMap<>((a, b) -> (b - a));
-        headIndex = -1;
+        map = new TreeMap();
+        dll = new DoubleLinkedList();
     }
 
-    public void offer(int num) {
-        if (headIndex == -1) {
-            headIndex = 0;
+    public void offer(int x) {
+        Node node = dll.add(x);
+        // 新节点
+        if (!map.containsKey(x)) {
+            map.put(x, new ArrayList<>());
         }
-        int size = queue.size();
-        queue.add(num);
-        if (!map.containsKey(num)) {
-            map.put(num, new ArrayList<>());
-        }
-
-        map.get(num).add(size);
+        // 有可能同一个值多次加入
+        map.get(x).add(node);
     }
 
     public int poll() {
-        int num = queue.get(headIndex);
-        queue.set(headIndex, null);
-        map.get(num).remove(0);
-        if (map.get(num).size() == 0) map.remove(num);
-        updateHeader();
-        return num;
+        int val = dll.poll();
+        List<Node> L = map.get(val);
+        L.remove(L.size() - 1);
+        if (L.isEmpty()) {
+            map.remove(val);
+        }
+        return val;
+    }
+
+    public int top() {
+        return dll.peek();
+    }
+
+    public int peekMax() {
+        return map.lastKey();
     }
 
     public int pollMax() {
-        int max = map.firstKey();
-        int index = map.get(max).get(0);
-        queue.set(index, null);
-        updateHeader();
-        map.get(max).remove(0);
-        if (map.get(max).size() == 0) map.remove(max);
+        // 当前最大值
+        int max = peekMax();
+        // 得到这个值的所有node
+        List<Node> list = map.get(max);
+        // 删除最后加入的
+        Node node = list.remove(0);
+        dll.remove(node);
+        if (list.isEmpty()) {
+            map.remove(max);
+        }
         return max;
     }
 
-    public void updateHeader() {
-        for (int i = headIndex; i < queue.size(); i++) {
-            if (queue.get(i) != null) {
-                headIndex = i;
-                break;
-            }
-        }
+    public static void main(String[] args) {
+        MaxQueue maxQ = new MaxQueue();
+        maxQ.offer(5);
+        maxQ.offer(3);
+        maxQ.offer(4);
+        maxQ.offer(9);
+        maxQ.offer(25);
+        maxQ.offer(1);
+        maxQ.offer(0);
+        System.out.println(maxQ.pollMax());
+        System.out.println(maxQ.poll());
+        System.out.println(maxQ.poll());
+        maxQ.offer(25);
+        maxQ.offer(25);
+        System.out.println(maxQ.pollMax());
+        System.out.println(maxQ.poll());
+        System.out.println(maxQ.poll());
+        System.out.println(maxQ.poll());
+    }
+}
+
+class DoubleLinkedList {
+    Node head;
+    Node tail;
+
+    public DoubleLinkedList() {
+        // dummy head and tail
+        head = new Node(0);
+        tail = new Node(0);
+        head.next = tail;
+        tail.prev = head;
     }
 
-    public static void main(String[] args) {
-        MaxQueue maxQueue = new MaxQueue();
-        maxQueue.offer(1);
-        maxQueue.offer(3);
-        maxQueue.offer(4);
-        maxQueue.offer(0);
-        maxQueue.offer(3);
+    public Node add(int val) {
+        Node node = new Node(val);
+        // 把node插入到tail和前一个点之间
+        // 这样node就是真实的tail
+        node.next = tail;
+        // 连接node和之前的真实的tail
+        node.prev = tail.prev;
+        // 之前的真实的tail
+        tail.prev.next = node;
+        tail.prev = node;
+        return node;
+    }
 
-        System.out.println(maxQueue.poll());
-        System.out.println(maxQueue.pollMax());
-        System.out.println(maxQueue.pollMax());
-        System.out.println(maxQueue.poll());
-        maxQueue.offer(5);
-        maxQueue.offer(5);
-        maxQueue.offer(5);
-        System.out.println(maxQueue.pollMax());
-        System.out.println(maxQueue.poll());
-        System.out.println(maxQueue.poll());
+    public int poll() {
+        // 去掉当前真实的tail
+        return remove(head.next).val;
+    }
+
+    public int peek() {
+        return head.next.val;
+    }
+
+    public Node remove(Node node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+        return node;
+    }
+}
+
+
+class Node {
+    int val;
+    Node prev;
+    Node next;
+
+    public Node(int val) {
+        this.val = val;
     }
 }
 ```
