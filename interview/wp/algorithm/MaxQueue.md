@@ -131,3 +131,87 @@ class Node {
     }
 }
 ```
+
+/\*\*
+Implement a data structure that has three apis: 1. poll -- Removes and returns the earliest element added (FIFO). 2. pollMax -- Removes and returns the maximum of all elements currently in the data structure. 3. add -- Adds a given element to the data structure.
+
+Assume that you are not storing integers in MaxQueue, rather you would be storing Job instances. Job interface must contain getPriority() method and pollMax should return the Job instance with the highest priority.
+\*/
+class Node {
+Node prev;
+Node next;
+Job job;
+
+    public Node(Job job) {
+        this.job = job;
+    }
+
+}
+
+public static void main(String[] args){
+MaxQueue maxQ = new MaxQueue();
+// Write some examples with expected output and go over the code.
+maxQ.add(5);
+maxQ.add(3);
+maxQ.add(4);
+maxQ.add(9);
+maxQ.add(25);
+maxQ.add(1);
+maxQ.add(0);
+maxQ.pollMax(); // 25
+maxQ.poll(); // 5
+maxQ.poll(); // 3
+
+}
+
+class MaxQueue {
+TreeMap<Integer, List<Node>> map;
+DoubleLinkedList dll;
+
+    public MaxQueue() {
+        map = new TreeMap((a, b) -> {
+            return a.getPriority() - b.getPriority();
+        });
+
+        dll = new DoubleLinkedList();
+    }
+
+    public void add(Job job) {
+        Node node = dll.add(job);
+        int x = job.getPriority();
+        if(!map.containsKey(x)) {
+            map.put(x, new LinkedList<>());
+        }
+
+        map.get(x).add(node);
+    }
+
+    public Job poll() {
+        if(map.isEmpty()) {
+            throw new RuntimeException("the queue is empty!");
+        }
+        Node node = dll.poll();
+        int pri = node.job.getPriority();
+        List<Node> list = map.get(pri);
+        list.remove(0); // This is expected to be O(1)
+        if(list.isEmpty()) {
+            map.remove(pri);
+        }
+        return node.job;
+    }
+
+    public Job pollMax() {
+        if(map.isEmpty()) {
+            throw new RuntimeException("the queue is empty!");
+        }
+        int max = map.lastKey();
+        List<Node> list = map.get(max);
+        Node node = list.remove(0);
+        dll.remove(node);
+        if(list.isEmpty()) {
+            map.remove(max);
+        }
+        return node.job;
+    }
+
+}
