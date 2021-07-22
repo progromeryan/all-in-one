@@ -4,65 +4,47 @@ import java.util.*;
 
 import structures.*;
 
-class Solution {
-    class Node {
-        int sum;
-        int start;
-
-        public Node(int sum, int start) {
-            this.sum = sum;
-            this.start = start;
+class RangeModule {
+    TreeMap<Integer, Integer> intervals = new TreeMap<>();
+    
+    public void addRange(int left, int right) {
+        // |-----|      |-------|
+        //     |----------|
+        // 都拿floorKey
+        Integer start = intervals.floorKey(left);
+        Integer end = intervals.floorKey(right);
+        if(start != null && intervals.get(start) >= left){
+            left = start;
         }
-    }
-
-    public int maxSumTwoNoOverlap(int[] nums, int firstLen, int secondLen) {
-
-        int total1 = getMax(nums, firstLen, secondLen);
-        int total2 = getMax(nums, secondLen, firstLen);
-        return Math.max(total1, total2);
-    }
-
-    public int getMax(int[] nums, int firstLen, int secondLen) {
-        int maxSum = 0;
-        int currSum = 0;
-        for (int i = 0; i < nums.length - firstLen; i++) {
-            currSum += nums[i];
-            if (i >= firstLen) {
-                currSum -= nums[i - firstLen];
-            }
-
-            if (i >= firstLen - 1) {
-                Node sec1 = helper(nums, 0, i - firstLen, secondLen);
-                Node sec2 = helper(nums, i + 1, nums.length - 1, secondLen);
-                maxSum = Math.max(maxSum, currSum + Math.max(sec1.sum, sec2.sum));
-            }
+        if(end != null && intervals.get(end) > right){
+            right = intervals.get(end);
         }
-        return maxSum;
+        intervals.put(left, right);
+        
+        intervals.subMap(left, false, right, true).clear();
     }
+    
+    public boolean queryRange(int left, int right) {
+        Integer start = intervals.floorKey(left);
+        if(start == null) return false;
+        return intervals.get(start) >= right;
+    }
+    
+    public void removeRange(int left, int right) {
+        // |-----|      |-------|
+        //     |----------|
+        // 都拿floorKey
+        Integer start = intervals.floorKey(left);
+        Integer end = intervals.floorKey(right);
 
-    public Node helper(int[] nums, int start, int end, int len) {
-        int currSum = 0;
-        int maxSum = 0;
-        int maxIndex = 0;
-
-        for (int i = start; i <= end; i++) {
-            currSum += nums[i];
-            if (i - start >= len) {
-                currSum -= nums[start + i - len];
-            }
-
-            if (i - start >= len - 1 && currSum > maxSum) {
-                maxSum = currSum;
-                maxIndex = i - len + 1;
-            }
+        if(end != null && intervals.get(end) > right){
+            intervals.put(right, intervals.get(end));
         }
 
-        return new Node(maxSum, maxIndex);
-    }
+        if(start != null && intervals.get(start) > left){
+            intervals.put(start, left);
+        }
 
-    public static void main(String[] args) {
-        Solution solution = new Solution();
-        int[] nums = new int[]{8, 20, 6, 2, 20, 17, 6, 3, 20, 8, 12};
-        solution.maxSumTwoNoOverlap(nums, 5, 4);
+        intervals.subMap(left, true, right, false).clear();
     }
 }
