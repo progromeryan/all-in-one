@@ -74,7 +74,7 @@
 
 ![img](assets/7-4.png)
 
-## 2.4 Twitter snowflake approach (Better solution)
+## 2.4 Twitter / Snowflake approach (Better solution)
 
 > Divide an ID into different sections
 

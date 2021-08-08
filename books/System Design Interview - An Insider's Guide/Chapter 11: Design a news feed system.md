@@ -179,3 +179,9 @@ GET /v1/me/feed
 - Support multiple data centers
 - Use message queue to lose couple components
 - Monitor key metrics, like QPS, latency...
+
+
+## 自动过期/阅后即焚功能
+
+- DynamoDB/Redis has TTL feature (time to live)
+- if user open the post, remove it from the post news feed cache
