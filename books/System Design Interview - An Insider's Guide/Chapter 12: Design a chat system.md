@@ -123,7 +123,7 @@
   - Enormous data (facebook, 60 billion messages a day)
   - Only recent chats are accessed frequently
   - Need to support search, view your mentions, jump specific messages...
-  - Eead to write ratio is about 1:1
+  - Read to write ratio is about 1:1
 
 > Why key-value store?
 
@@ -138,13 +138,13 @@
 
 > message_id is used to decide message sequence
 
-![img](assets/12-9.png)
+<img src="assets/12-9.png" style="width: 300px"/>
 
 ### 2.6.2 Message table for group chat
 
 > Composite primary key: (channel_id, message_id)
 
-![img](assets/12-10.png)
+<img src="assets/12-10.png" style="width: 300px"/>
 
 ### 2.6.3 Message ID
 

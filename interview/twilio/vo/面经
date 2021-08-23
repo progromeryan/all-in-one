@@ -1,0 +1,129 @@
+Twilio Onsite
+1 华裔小哥，感觉到他深深疲倦了，说刚刚结束给别人面试，聊了大概10min简历，细问了我跟这个team最匹配的一段经历，然后出了一道非LC题，理解规则后并不难，follow-up也顺利做出了，每次写完代码都要拿一个test case work through一下
+2 美国小哥，进来看了一眼白板就笑着说几年前他进来华裔小哥就面的这道题2333，也是聊了下简历，然后代码是LRU cache，也秒之（还假装没见过这题，一步步写的）
+3 是之前给我电面的白人大哥，system design，不过还是跟team做的内容很相关的，关于一些data pipeline的design（第五轮和组里manager聊了下对new grad的expectation，她回答说安排这个主要就是看看思考过程），聊天中大哥疯狂笔记
+4 印度小哥，因为之前几轮聊得开心有点超时，这一轮小哥直接上design题，关于在data storage中添加新的数的一些design，我聊了下hash和sharding两种方式，然后小哥对我简历补充问了下hive，hbase的一些东西
+5 印度女manager！之前看过帖子说她是不停发问的犀利人，问题是很多，而且横跨编程语言，过往经历，以前用的任何一个tech stack的细节问题，自己的weakness/strength，未来工作设想blabla 我说到她有共鸣的part她还会听下疯狂在电脑敲打的手，与我谈笑一番，全程笑容，也有互动，感觉人还是很温和的。快问快答趴结束后，姐说‘还有七分钟’，我心想，好的来吧，写一题！结果姐问我有什么问题要问她的，聊了下team做的东西
+
+其他感慨：1 Twilio的预定酒店和航班是用的TripActions，感觉这个软件很好用啊，不愧是Linkedin Hot Startup。因为定的比较迟，很多酒店都full了，最后选了离公司步行15min的W，早餐真是没话说，waiter小哥看我的餐券是for 2的，直接让我点两份？？我点了一个egg benedict，小哥奋力推荐再加一个rib eye steak，我一时被小哥热情迷惑，然后餐点上来我吃了半块牛排就饱足，剩下的仓皇打包（伴随小哥狂笑，说you‘ve done pretty good work）
+2 没有感觉twilio办公区很挤？可能因为我这次是在五楼面试，是刚开辟出的新办公区，没看到三楼，四楼的状况。
+3 recruiter没有提报销uber啥的，因为其他公司都是会主动去说，搞得我也不太好意思去询（suo问（qu），如果有知道可以报销的请告诉我哈哈哈。
+
+4 收到拒信啦，就很迷茫吧，最近连着算法题都做出，这次我非常确信我写的都没问题，系‍‍‍‌‌‍‌‌‍‍‍‍‌‍‌‌‌‍统设计虽然这两周才准备，但看了很多资料，也能感觉自己每次回答的进步，怎么还是不行啊，丧气...
+看到一个个机会在手上溜走，面完怀抱期望然后又被thanks you letter击溃的生活...
+move on... 永远怀着一腔热血去努力吧（抱歉，心情太差了在干货里忍不住夹杂了些絮絮叨叨）
+谢谢看到这里！~
+
+---------------------
+1. 美籍小哥哥聊天，问kafka，怎么理解。coding：matrix，左上角到右下角一共 多少路径，后来反应过来dp，一开始直接dfs暴力解了。然后问了半道design之类的， 就是某个表的id是auto 递增的，问copy这个表的时候(比如传到云端）怎么样deduplicate
+2. HM： 印度人，  之前一直看帖子说她面试问的特别细。 确实很细，抓着你简历 问问问问， 问各种BQ，draw back，multi task，项目细节。。。
+3. 白人大叔，全程拿一张纸狂写。这轮应该是data model，设计数据库schema，比如一家 连锁书店，有两个分店，店里存书。
+sql问了一下 在表里面怎么样找到distinct inventory 的 书的个数， 然后又问了一些数据库问题，比如说index太多的draw back之类的。
+4. 轮空。本来是manager面的，结果他一直有事，接待的小哥哥非常抱歉一直陪我尬聊
+5. ABC小哥哥。system design，
+先让想想他给的他们公司某数据的schema，
+写完了之后说我有个kafka，处理完有streaming data和batch data你要怎么处理。
+我就结合之前实习乱讲，说用spark streaming存rdd balaba‍‍‍‌‌‍‌‌‍‍‍‍‌‍‌‌‌‍la。。。
+然后问我batch data太大了数据库存不下怎么办，我一开始脑子没转过来说NoSQL，
+他说NoSQL也不行。我说用distributed system，他说好的，
+然后开始问你数据怎么分布，每个node存数据的依据。（
+我就讲了根据时间balabala，也不知道对不对）接着问，
+如果有某个客户的数据量特别大，你要怎么办？我实在想不出来，
+说单独给他一个node，再分。  大概是这样。
+
+---------------
+他家是一轮system design + 3轮coding(我面的那个组coding需要上机跑test case，可以自己带电脑）, 感觉他家白人都挺有水平题目讨论起来很愉快，但是印度人挺黑的.1. Design FB newsfeed
+2. LRU cache + 一个lc简单题（忘记是什么了）
+3. 写一个singleton class 并且解释下概念，另外一个题是写一个blocking queue
+4. 记不清了，反正是个lc的hard题
+
+面完第二天一早hr打电话来说coding的feedback很好，但是design有点concern希望加面一轮，我对这个组不太感兴趣就没去加面，
+另外觉得印度人面完我system design的时候挺黑的。
+
+P.S 当时和hr说不去加面磨了一会后hr说了薪水，说是这个职位给的范围是180k base,‍‍‍‌‌‍‌‌‍‍‍‍‌‍‌‌‌‍ 300+K rsu，还有其他bonus我没仔细听，
+反正感觉他家的包给的也不错，有兴趣的同学可以去面一下
+
+
+--------
+今天面的sendgrid redwood office，一共四轮，office感觉很小，人不是很多
+
+1. PM面，问过去的projects，behavior questions
+2. coding， text justification
+3. system design， parking building system，需要的哪些api，db schema 怎么设计
+4. hiring manager 面试， 问了LRU implementation， 多余时间问了   deduplicati‍‍‍‌‌‍‌‌‍‍‍‍‌‍‌‌‌‍on 如何去做，最后介绍了 组里的project
+
+
+
+------
+电面是组里的director来面的，我当时搜完LinkedIn感觉药丸 哈哈哈。一共45分钟，聊项目 (20min) +  系统设计 (20min) + Q&A (5min)
+
+系统设计问了设计一个distributed key-value store，然后追问了一下如何保证Fault-Tolerance, 就是比如一个机子挂了怎么保证没有数据丢失之类的。
+
+
+
+Data Platform这个组好像最近招挺多人的，大家可以投一投试试~
+
+-----
+和前几个帖子里的一样，一共三道题
+1.一个prefix list, 一个numbers list,要求为每个number 在prefix list里找到longest prefix,没有的话返回 “”
+2.回答1的time complexity, improvement, when to use optimized solution over naive solution
+3.分割任意长度的string, 每个segment小于等于160char, 并有后缀形如"(x/total)". Given total segments<9. 只能在空格处分割，如若加上空格>160, 空格放在下一个segment里.
+
+Solutions:
+1.最优解用trie
+2.因为numbers最长16char，所以是O(prefix list size + numbers list size).
+3.链接2里的python解答基本正确，但是不需要分row<=5考虑，此处理解有差异。另外要考虑end==length()‍‍‍‌‌‍‌‌‍‍‍‍‌‍‌‌‌‍ -1的corner case,不然可能会segfault.
+
+
+
+-----
+9/23的twilio OA面经
+version （A），题目没变
+1. prefix and number 8个testcase
+2.三个小问， 1）big-O，2）能否优化 3）如果有优化的拌法，相比于naive的做法，什么时候你会选择优化
+3. segment str，分长度是否大于160进行讨论， 3个testcase，第一个testcase小于160直‍‍‍‌‌‍‌‌‍‍‍‍‌‍‌‌‌‍接放，后两个testcase 考虑换行就能过
+
+
+--- 
+1. 输入是前缀字符串数组和待检查的电话号码数组，输出对应的最长前缀或者空字符串
+2. 回答上一题时间复杂度和改进方案
+3. 类似刷题柳罢。区别在于长度固定，不要求均匀排布word，但是要求在每一行结尾加入1/3,2/3,3/3这样的页码。
+HackerRank的平台在IO输出上会丢最前或者最后的空格，看不出为啥挂的话把sample data下载下来看。
+最好把页码在第一次遍历的时候就定下来加好。
+
+----
+
+分享刚做的Twilio OA，标题是University Recruiting Fall 2019 Tests (A)，90分钟完成。
+
+第一题：给一个prefixes: List[str]和一个numbers: List[str]，prefixes和numbers里的str最长的长度是16。输出一个List[str] such that 每一个元素是numbers的元素在prefixes里的最长的前缀match。
+
+解法是把prefixes存放在prefixes_set里，对每一个number，遍历其前缀字符串，从长到短在prefix_set搜索，复杂度O(n)。
+
+
+第二题：问第一题的复杂度，如何改进，何时会使用改进的算法。
+
+我认为无法改进时间复杂度，空间可以稍微缩小，用Trie。当prefixes里有大量元素是其它元素的前缀字符串的时候使用，但是大O并不会被优化。
+
+
+第三题：给一个str，返回一个List[str]。情景是一条短信太长‍‍‍‌‌‍‌‌‍‍‍‍‌‍‌‌‌‍，手机短信不够发，截成几个短消息发送。题目里有具体的截断消息的方法。
+
+问题不难，但是要小心一个很坑的地方：做题的时候看main函数里是怎么输入和输出的，因为题目没给出明确的function signature，你得自己找出输入和输出的type。
+
+
+---- 
+distinct: 建立一个dict。 key是数组元素,value是出现的次数。然后index i 扫一遍数组。分两种情况，if i==k-i: answer++, dict中删除d, elif i!=k-i:anser++,dict中删除 d和d[k-i]
+
+stock: 建立一个map, key就是P1，P2，value 就是a,b，不断更新这个map的value，最后按顺序输出map的value。Java用Linkedhashmap。 Python 用OrderedDict, return dict.values(), 6行搞定。
+
+k-subsequence: 可以完全参考网上的，直接Google 关键词，一堆答案，所以也不用读题。这里我贴个代码吧
+static long kSub(int k, int[] nums) {
+   
+    int [] sum = new int[nums.length];    long count = 0;        sum[0] = nums[0];        for(int i = 1; i < nums.length; i++){        sum = sum[i-1] + nums;    }        int [] kVal = new int[k];        for(int i = 0; i < sum.length; i++){               int mod = sum % k;
+    ‍‍‍‌‌‍‌‌‍‍‍‍‌‍‌‌‌‍    if(mod == 0)            count++;
+        count += kVal[mod];        kVal[mod] += 1;                 }    return count; }　
+
+
+有一些注意事项，第一题的target是long（java）所以你需要设置一下你的hashmap的key。稍微变一下
+第二题的题目确实又臭又长，简单来说就是他给你一个key-value pair矩阵，你需要逐行updating key的最新的value，然后最后按存入hashmap的顺序输出value就行。
+第三题的话，还是注意他的结果会是‍‍‍‌‌‍‌‌‍‍‍‍‌‍‌‌‌‍一个非常大的数，同样也是个long，所以我们存modk那个数组也是需要long的。
+写第一题捣鼓了半天才发现target是个long。还以为来不及，还好后两题水
